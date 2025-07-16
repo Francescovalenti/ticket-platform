@@ -6,27 +6,36 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
-@Table (name="notes")
+@Table(name = "notes")
 public class Note {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    
+
     @NotNull(message = "Author is required")
     private String author;
-    
-    @NotBlank (message = "Content is required")
+
+    @NotBlank(message = "Content is required")
     private String content;
-    
-    @NotNull(message =  " Date is required")
+
+    @NotNull(message = " Date is required")
     private LocalDateTime createdAt;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "ticket_id", nullable = false)
+    private Ticket ticket;
 
     public Integer getId() {
         return this.id;
@@ -60,7 +69,20 @@ public class Note {
         this.createdAt = createdAt;
     }
 
+    public User getUser() {
+        return this.user;
+    }
 
+    public void setUser(User user) {
+        this.user = user;
+    }
 
+    public Ticket getTicket() {
+        return this.ticket;
+    }
+
+    public void setTicket(Ticket ticket) {
+        this.ticket = ticket;
+    }
 
 }
