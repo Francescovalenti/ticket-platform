@@ -10,7 +10,7 @@ import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table (name = "operator")
-public class Operator {
+public class User {
 
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
