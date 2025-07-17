@@ -36,7 +36,7 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @NotNull(message = "The availability status is required")
-    private UserStatus Status;
+    private UserStatus status;
 
     public enum UserStatus {
         ACTIVE,
@@ -78,11 +78,11 @@ public class User {
     }
 
     public UserStatus getStatus() {
-        return this.Status;
+        return this.status;
     }
 
     public void setStatus(UserStatus Status) {
-        this.Status = Status;
+        this.status = Status;
     }
 
    

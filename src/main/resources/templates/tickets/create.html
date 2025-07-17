@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+
+    <title>Nuovo Ticket</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.7/css/bootstrap.min.css}" />
+</head>
+
+</head>
+<body>
+    <div class="container mt-4">
+  <h2 class="mb-4">Crea un nuovo Ticket</h2>
+  <form method="post" th:action="@{/tickets}" th:object="${ticket}">
+    
+    
+    <div class="mb-3">
+      <label class="form-label">Titolo</label>
+      <input type="text" class="form-control" th:field="*{title}" placeholder="Inserisci un titolo">
+      <div class="text-danger" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+    </div>
+
+    
+    <div class="mb-3">
+      <label class="form-label">Descrizione</label>
+      <textarea class="form-control" rows="4" th:field="*{description}" placeholder="Descrivi il problema"></textarea>
+      <div class="text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+    </div>
+
+
+    <div class="mb-3">
+      <label class="form-label">Categoria</label>
+      <select class="form-select" th:field="*{category.id}">
+        <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}">Categoria</option>
+      </select>
+    </div>
+
+
+    <div class="mb-3">
+      <label class="form-label">Assegna a</label>
+      <select class="form-select" th:field="*{user.id}">
+        <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.username}">Operatore</option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Stato</label>
+      <select class="form-select" th:field="*{status}">
+        <option th:value="TODO">Da fare</option>
+        <option th:value="IN_PROGRESS">In corso</option>
+        <option th:value="COMPLETED">Completato</option>
+      </select>
+    </div>
+
+    <div class="text-end">
+      <button type="submit" class="btn btn-primary">Salva Ticket</button>
+    </div>
+  </form>
+</div>
+
+    
+</body>
+</html>
