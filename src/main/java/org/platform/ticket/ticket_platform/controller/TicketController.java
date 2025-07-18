@@ -21,10 +21,14 @@ import jakarta.validation.Valid;
 @RequestMapping("/tickets")
 public class TicketController {
 
-    @Autowired private TicketRepository ticketRepository;
-    @Autowired private UserRepository userRepository;
-    @Autowired private NoteRepository noteRepository;
-    @Autowired private CategoryRepository categoryRepository;
+    @Autowired
+    private TicketRepository ticketRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private NoteRepository noteRepository;
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @GetMapping
     public String index(Model model) {
@@ -41,9 +45,7 @@ public class TicketController {
     }
 
     @PostMapping
-    public String store(@Valid @ModelAttribute("ticket") Ticket formTicket,
-                        BindingResult bindingResult,
-                        Model model) {
+    public String store(@Valid @ModelAttribute("ticket") Ticket formTicket,BindingResult bindingResult,Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("users", userRepository.findByRolesNameAndStatus("OPERATOR", UserStatus.ACTIVE));
             model.addAttribute("categories", categoryRepository.findAll());
@@ -66,9 +68,9 @@ public class TicketController {
 
     @PostMapping("/{id}")
     public String update(@PathVariable Integer id,
-                         @Valid @ModelAttribute("ticket") Ticket formTicket,
-                         BindingResult bindingResult,
-                         Model model) {
+            @Valid @ModelAttribute("ticket") Ticket formTicket,
+            BindingResult bindingResult,
+            Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("users", userRepository.findByRolesNameAndStatus("OPERATOR", UserStatus.ACTIVE));
             model.addAttribute("categories", categoryRepository.findAll());
@@ -76,7 +78,7 @@ public class TicketController {
         }
 
         ticketRepository.save(formTicket);
-        return "redirect:/tickets/" + id;
+        return "redirect:/tickets/";
     }
 
     @GetMapping("/{id}/delete")
@@ -99,9 +101,9 @@ public class TicketController {
 
     @PostMapping("/{id}/note")
     public String addNote(@PathVariable Integer id,
-                          @Valid @ModelAttribute("newNote") Note note,
-                          BindingResult bindingResult,
-                          Model model) {
+            @Valid @ModelAttribute("newNote") Note note,
+            BindingResult bindingResult,
+            Model model) {
         Ticket ticket = ticketRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Ticket non trovato"));
 
