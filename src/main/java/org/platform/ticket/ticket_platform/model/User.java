@@ -96,6 +96,5 @@ public class User {
         this.roles = roles;
     }
 
-    public class StatusTicket {
-    }
+   
 }
