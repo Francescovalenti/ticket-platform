@@ -6,11 +6,10 @@ import java.util.Optional;
 
 import org.platform.ticket.ticket_platform.model.Note;
 import org.platform.ticket.ticket_platform.model.Ticket;
-import org.platform.ticket.ticket_platform.model.User;
-import org.platform.ticket.ticket_platform.repository.CategoryRepository;
+
 import org.platform.ticket.ticket_platform.repository.NoteRepository;
 import org.platform.ticket.ticket_platform.repository.TicketRepository;
-import org.platform.ticket.ticket_platform.repository.UserRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
@@ -25,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
-import jakarta.persistence.Id;
 import jakarta.validation.Valid;
 
 @Controller
@@ -36,12 +34,6 @@ public class AdminController {
     @Autowired
 
     private TicketRepository ticketRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private CategoryRepository categoryRepository;
 
     @Autowired
     private NoteRepository noteRepository;
@@ -76,14 +68,15 @@ public class AdminController {
     }
 
     @PostMapping("tickets/{id}/notes")
-    public String store(@PathVariable Integer id,@Valid @ModelAttribute("newNote") Note note, BindingResult BindingResult, Model model) {
+    public String store(@PathVariable Integer id, @Valid @ModelAttribute("newNote") Note note,
+            BindingResult bindingResult, Model model) {
 
         Optional<Ticket> optionalTicket = ticketRepository.findById(id);
         if (optionalTicket.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket non trovato");
         }
         Ticket ticket = optionalTicket.get();
-        
+
         note.setTicket(ticket);
         note.setId(null);
         note.setAuthor("Author");
