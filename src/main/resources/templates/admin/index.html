@@ -1,20 +1,16 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ticket </title>
+    <title>Ticket</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.7/css/bootstrap.min.css}" />
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 
-
 <body>
-    <header>
-        
-    </header>
+    <header></header>
     <main class="container">
         <section class="title row">
             <div class="col-12">
@@ -24,18 +20,14 @@
         <section class="search-bar row justify-content-center mb-3">
             <form th:action="@{/tickets}" method="POST" class="col-12 d-flex justify-content-between">
                 <div class="creation-button" sec:authorize="hasAuthority('ADMIN')">
-                    <a th:href="@{/tickets/create}" class="btn btn-warning ">Crea un nuovo Ticket</a>
+                    <a th:href="@{/tickets/create}" class="btn btn-warning">Crea un nuovo Ticket</a>
                 </div>
-
             </form>
         </section>
         <section class="menu-box mt-4 shadow-lg row">
-
-
-            <form class="d-flex align-items-end mb-4 col-6  ms-auto" role="search" th:action="@{/tickets}" method="get">
-                <input class="form-control me-2 " type="search" placeholder="Cerca " aria-label="Search" name="keyword"
-                    th:value="${search}">
-                <button class="btn btn-primary  " type="submit">Cerca</button>
+            <form class="d-flex align-items-end mb-4 col-6 ms-auto" role="search" th:action="@{/tickets}" method="get">
+                <input class="form-control me-2" type="search" placeholder="Cerca" aria-label="Search" name="keyword" th:value="${search}">
+                <button class="btn btn-primary" type="submit">Cerca</button>
             </form>
 
             <table class="table table-striped text-bg-warning p-3">
@@ -44,74 +36,51 @@
                         <th class="scope">Categoria</th>
                         <th class="scope">Titolo</th>
                         <th class="scope">Descrizione</th>
-                        <th class="">Operatore</th>
+                        <th class="scope">Operatore</th>
                         <th class="scope">Stato</th>
-                        
-                        
                     </tr>
                 </thead>
-                <tbody class="text-bg-warning p-3 ">
+                <tbody class="text-bg-warning p-3">
                     <tr th:each="ticket : ${tickets}">
-                        <td th:text="${ticket.category}"></td>
+                        <td th:text="${ticket.category.name}"></td> 
                         <td th:text="${ticket.title}"></td>
                         <td th:text="${ticket.description}"></td>
-                        <td th:text="${ticket.user.username}"></td>
+                        <td th:text="${ticket.user.username}"></td> 
                         <td th:text="${ticket.status}"></td>
-                    </tr>
-                    <tr th:if="${#lists.isEmpty(tickets)}">
-                        <td colspan="4" class="text-center text-danger fw-bold">
-                            Nessun Ticket disponibile al momento.
-                        </td>
-                    </tr>
-                    
-                        <td><a th:href="@{/tickets/{id}(id=${ticket.id})}" class="btn btn-primary btn-sm">Dettagli</a>
+                        <td>
+                            <a th:href="@{/tickets/{id}(id=${ticket.id})}" class="btn btn-primary btn-sm">Dettagli</a>
                             <a th:href="@{/tickets/edit/{id}(id=${ticket.id})}" sec:authorize="hasAuthority('ADMIN')" class="btn btn-warning btn-sm">Edit</a>
-                            <button sec:authorize="hasAuthority('ADMIN')" type="button" class="d-inline btn btn-danger btn-sm" data-bs-toggle="modal"
-                                th:data-bs-target="'#delete-modal-' + *{id}">
+                            <button sec:authorize="hasAuthority('ADMIN')" type="button" class="d-inline btn btn-danger btn-sm" data-bs-toggle="modal" th:data-bs-target="'#delete-modal-' + ${ticket.id}">
                                 Delete
                             </button>
-                            <div class="modal fade" th:id="'delete-modal-' + *{id}" data-bs-backdrop="static"
-                                data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
-                                aria-hidden="true">
+                            <div class="modal fade" th:id="'delete-modal-' + ${ticket.id}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Deletion of
-                                                <strong>"[[*{title}]]"</strong>
-                                            </h1>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
+                                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Deletion of <strong th:text="${ticket.title}"></strong></h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
-                                            <p>
-                                                Sei sicuro di volerlo eliminare?
-                                                <strong>"[[*{name}]]"</strong>
-                                            </p>
+                                            <p>Sei sicuro di volerlo eliminare? <strong th:text="${ticket.title}"></strong></p>
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary"
-                                                data-bs-dismiss="modal">Close</button>
-                                            <form th:action="@{/tickets/delete/{id}(id=*{id})}" method="post"
-                                                class="d-inline">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <form th:action="@{/tickets/delete/{id}(id=${ticket.id})}" method="post" class="d-inline">
                                                 <button type="submit" class="btn btn-danger">Delete</button>
                                             </form>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
-
-
                         </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(tickets)}">
+                        <td colspan="6" class="text-center text-danger fw-bold">Nessun Ticket disponibile al momento.</td>
                     </tr>
                 </tbody>
             </table>
-
         </section>
-
     </main>
-
 </body>
 <script th:src="@{/webjars/bootstrap/5.3.7/js/bootstrap.bundle.min.js}"></script>
-
 </html>

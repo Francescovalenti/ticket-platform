@@ -6,39 +6,30 @@ import java.util.Optional;
 
 import org.platform.ticket.ticket_platform.model.Note;
 import org.platform.ticket.ticket_platform.model.Ticket;
-
 import org.platform.ticket.ticket_platform.repository.NoteRepository;
 import org.platform.ticket.ticket_platform.repository.TicketRepository;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import jakarta.validation.Valid;
 
 @Controller
-@RequestMapping("/admin")
-
+@RequestMapping("/admin")  
 public class AdminController {
 
     @Autowired
-
     private TicketRepository ticketRepository;
 
     @Autowired
     private NoteRepository noteRepository;
 
-    @GetMapping("/admin")
+    
+    @GetMapping
     public String index(@RequestParam(name = "search", required = false) String search, Model model) {
         List<Ticket> tickets;
 
@@ -49,10 +40,10 @@ public class AdminController {
         }
 
         model.addAttribute("tickets", tickets);
-        return "admin/index";
+        return "admin/index";  
     }
 
-    @GetMapping("/admin/{id}")
+    @GetMapping("/{id}")
     public String show(@PathVariable("id") Integer id, Model model) {
         Optional<Ticket> ticketOptional = ticketRepository.findById(id);
         if (ticketOptional.isEmpty()) {
@@ -64,12 +55,13 @@ public class AdminController {
         model.addAttribute("noteList", ticket.getNotes());
         model.addAttribute("newNote", new Note());
 
-        return "admin/show";
+        return "admin/show";  
     }
 
-    @PostMapping("admin/{id}/notes")
+    
+    @PostMapping("/{id}/notes")
     public String store(@PathVariable Integer id, @Valid @ModelAttribute("newNote") Note note,
-            BindingResult bindingResult, Model model) {
+                        BindingResult bindingResult, Model model) {
 
         Optional<Ticket> optionalTicket = ticketRepository.findById(id);
         if (optionalTicket.isEmpty()) {
@@ -77,13 +69,18 @@ public class AdminController {
         }
         Ticket ticket = optionalTicket.get();
 
+       
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("ticket", ticket);
+            model.addAttribute("noteList", ticket.getNotes());
+            return "admin/show";
+        }
+
         note.setTicket(ticket);
         note.setId(null);
-        note.setAuthor("Author");
-        note.setContent("text");
+        note.setAuthor("Admin");    
         note.setCreatedAt(LocalDateTime.now());
         noteRepository.save(note);
-        return "redirect:/admin";
+        return "redirect:/admin/" ;
     }
-
 }
