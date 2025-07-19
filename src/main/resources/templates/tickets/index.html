@@ -29,9 +29,9 @@
                 <td th:text="${ticket.title}">-</td>
                 <td th:text="${ticket.description}">-</td>
                 <td th:text="${ticket.status}">-</td>
-                <td th:text="${ticket.category != null ? ticket.category.name : '-'}">-</td>
-                <td th:text="${ticket.user != null ? ticket.user.username : '-'}">-</td>
-                <td th:text="${ticket.createdAt != null ? #temporals.format(ticket.createdAt, 'dd/MM/yyyy HH:mm') : '-'}">-</td>
+                <td th:text="${ticket.category.name}">-</td>
+                <td th:text="${ticket.user.username}">-</td>
+                <td th:text="${#temporals.format(ticket.createdAt, 'dd/MM/yyyy HH:mm')}">-</td>
                 <td>
                     <a th:href="@{'/tickets/' + ${ticket.id}}" class="btn btn-info btn-sm">Dettagli</a>
                 </td>
