@@ -38,7 +38,7 @@ public class AdminController {
     @Autowired
     private NoteRepository noteRepository;
 
-    @GetMapping
+    @GetMapping("/admin")
     public String index(@RequestParam(name = "search", required = false) String search, Model model) {
         List<Ticket> tickets;
 
@@ -49,10 +49,10 @@ public class AdminController {
         }
 
         model.addAttribute("tickets", tickets);
-        return "admin/dashboard";
+        return "admin/index";
     }
 
-    @GetMapping("/tickets/{id}")
+    @GetMapping("/admin/{id}")
     public String show(@PathVariable("id") Integer id, Model model) {
         Optional<Ticket> ticketOptional = ticketRepository.findById(id);
         if (ticketOptional.isEmpty()) {
@@ -64,10 +64,10 @@ public class AdminController {
         model.addAttribute("noteList", ticket.getNotes());
         model.addAttribute("newNote", new Note());
 
-        return "admin/show-ticket";
+        return "admin/show";
     }
 
-    @PostMapping("tickets/{id}/notes")
+    @PostMapping("admin/{id}/notes")
     public String store(@PathVariable Integer id, @Valid @ModelAttribute("newNote") Note note,
             BindingResult bindingResult, Model model) {
 
@@ -83,7 +83,7 @@ public class AdminController {
         note.setContent("text");
         note.setCreatedAt(LocalDateTime.now());
         noteRepository.save(note);
-        return "redirect:/tickets";
+        return "redirect:/admin";
     }
 
 }

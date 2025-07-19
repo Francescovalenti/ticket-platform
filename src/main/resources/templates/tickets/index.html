@@ -21,7 +21,7 @@
         <strong>Creato il:</strong> <span th:text="${#temporals.format(ticket.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
     </div>
     <div class="mb-3">
-        <strong>Categoria:</strong> <span th:text="${ticket.category.name}"></span>
+        <strong>Categoria:</strong> <span th:text="${ticket.category}"></span>
     </div>
     <div class="mb-3">
         <strong>Assegnato a:</strong> <span th:text="${ticket.user.username}"></span>
