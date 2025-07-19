@@ -16,6 +16,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+
 @Entity
 @Table(name = "tickets")
 public class Ticket {
@@ -35,8 +36,9 @@ public class Ticket {
     @NotNull(message = "Status is required")
     private StatusTicket status;
 
-    @NotNull(message = " Date is required")
-    private LocalDateTime createdAt;
+    
+    private LocalDateTime createdAt; 
+
 
     @ManyToOne
     @JoinColumn(name = "categories_id", nullable = false)

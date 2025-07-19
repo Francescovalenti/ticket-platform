@@ -34,6 +34,9 @@ public class User {
     @NotBlank(message = "Password is required")
     private String password;
 
+     @NotBlank(message = "Email is required")
+    private String email;
+
     @Enumerated(EnumType.STRING)
     @NotNull(message = "The availability status is required")
     private UserStatus status;

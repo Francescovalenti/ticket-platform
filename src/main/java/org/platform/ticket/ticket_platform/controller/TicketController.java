@@ -1,7 +1,6 @@
 package org.platform.ticket.ticket_platform.controller;
 
 import java.time.LocalDateTime;
-
 import org.platform.ticket.ticket_platform.model.Note;
 import org.platform.ticket.ticket_platform.model.Ticket;
 import org.platform.ticket.ticket_platform.model.User.UserStatus;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
 import jakarta.validation.Valid;
 
 @Controller
@@ -45,15 +43,15 @@ public class TicketController {
     }
 
     @PostMapping
-    public String store(@Valid @ModelAttribute("ticket") Ticket formTicket,BindingResult bindingResult,Model model) {
+    public String store(@Valid @ModelAttribute("ticket") Ticket formTicket, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("users", userRepository.findByRolesNameAndStatus("OPERATOR", UserStatus.ACTIVE));
             model.addAttribute("categories", categoryRepository.findAll());
             return "tickets/create";
         }
-
+        formTicket.setCreatedAt(LocalDateTime.now());
         ticketRepository.save(formTicket);
-        return "redirect:/tickets";
+        return "redirect:/admin";
     }
 
     @GetMapping("/{id}/edit")
@@ -67,18 +65,16 @@ public class TicketController {
     }
 
     @PostMapping("/{id}")
-    public String update(@PathVariable Integer id,
-            @Valid @ModelAttribute("ticket") Ticket formTicket,
-            BindingResult bindingResult,
-            Model model) {
+    public String update(@PathVariable Integer id, @Valid @ModelAttribute("ticket") Ticket formTicket,
+            BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("users", userRepository.findByRolesNameAndStatus("OPERATOR", UserStatus.ACTIVE));
             model.addAttribute("categories", categoryRepository.findAll());
             return "tickets/edit";
         }
-
+        formTicket.setId(id); 
         ticketRepository.save(formTicket);
-        return "redirect:/tickets/";
+        return "redirect:/admin";
     }
 
     @GetMapping("/{id}/delete")
@@ -86,7 +82,7 @@ public class TicketController {
         Ticket ticket = ticketRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Ticket non trovato con id: " + id));
         ticketRepository.delete(ticket);
-        return "redirect:/tickets";
+        return "redirect:/admin";
     }
 
     @GetMapping("/{id}")
@@ -106,18 +102,15 @@ public class TicketController {
             Model model) {
         Ticket ticket = ticketRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Ticket non trovato"));
-
         if (bindingResult.hasErrors()) {
             model.addAttribute("ticket", ticket);
             model.addAttribute("noteList", noteRepository.findByTicketId(id));
             return "tickets/show";
         }
-
         note.setTicket(ticket);
         note.setCreatedAt(LocalDateTime.now());
         note.setAuthor("admin");
         noteRepository.save(note);
-
         return "redirect:/tickets/" + id;
     }
 }
