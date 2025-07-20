@@ -42,6 +42,7 @@
                         <th class="scope">Operatore</th>
                         <th class="scope">Stato</th>
                         <th class="scope">Note</th>
+                        <th class="scope">Azioni</th>
                     </tr>
                 </thead>
                 <tbody class="text-bg-warning p-3">
@@ -80,7 +81,7 @@
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary"
                                                 data-bs-dismiss="modal">Close</button>
-                                            <form th:action="@{/tickets/delete/{id}(id=${ticket.id})}" method="post"
+                                            <form th:action="@{/admin/delete/{id}(id=${ticket.id})}" method="post"
                                                 class="d-inline">
                                                 <button type="submit" class="btn btn-danger">Delete</button>
                                             </form>

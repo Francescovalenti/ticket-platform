@@ -39,7 +39,7 @@ public class OperatorController {
     @Autowired
     private NoteRepository noteRepository;
      // dettagli della lista dei ticket assegnati
-    @GetMapping("/detaiils/{id}")
+    @GetMapping("/details/{id}")
    
     public String show(@PathVariable("id") Integer id, Model model) {
         Optional<Ticket> ticketOptional = ticketRepository.findById(id);
