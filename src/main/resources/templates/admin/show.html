@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="'Pizza: ' + ${pizza.name}">Dettagli Pizza</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.6/css/bootstrap.min.css}" />
+</head>
+
+<body class="bg-light">
+<div class="container mt-5">
+    <a th:href="@{/pizzas}" class="btn btn-secondary mb-3">&larr; Torna all'elenco</a>
+
+    
+    <div class="card shadow">
+        <div class="card-header bg-warning text-center">
+            <h2 th:text="${pizza.name}">Nome Pizza</h2>
+        </div>
+        <div class="card-body text-center">
+            <img th:src="${pizza.pic}" class="img-fluid rounded mb-3" style="max-width: 300px;">
+           
+            <h4 th:text="${#numbers.formatCurrency(pizza.price)}" class="text-success"></h4>
+          
+        </div>
+    </div>
+
+    
+    <h3 class="mt-4">Offerte Speciali</h3>
+
+    <a th:href="@{/specialoffers/create(pizzaId=${pizza.id})}" class="btn btn-success mb-3">
+        Crea nuova offerta speciale
+    </a>
+
+    <div th:if="${offers != null and !offers.isEmpty()}">
+        <ul class="list-group">
+            <li class="list-group-item d-flex justify-content-between align-items-center"
+                th:each="offer : ${offers}">
+                <span>
+                    <strong th:text="${offer.title}"></strong><br>
+                    Dal <span th:text="${offer.startDate}"></span>
+                    al <span th:text="${offer.enDate}"></span>
+                </span>
+                <div class="d-flex gap-2">
+                    <a th:href="@{/specialoffers/{id}/edit(id=${offer.id})}" class="btn btn-primary btn-sm">Modifica</a>
+                    <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal"
+                            th:data-bs-target="'#deleteModal' + ${offer.id}">
+                        Elimina
+                    </button>
+                </div>
+
+                <div class="modal fade" th:id="'deleteModal' + ${offer.id}" tabindex="-1" aria-labelledby="modalLabel"
+                     aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form th:action="@{/specialoffers/{id}/delete(id=${offer.id})}" method="post">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Conferma Eliminazione</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Sei sicuro di voler eliminare l’offerta "<strong th:text="${offer.title}"></strong>"?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                                    <button type="submit" class="btn btn-danger">Elimina</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <div th:if="${offers.size() == 0}">
+        <p>Questa pizza non ha offerte speciali.</p>
+    </div>
+
+    
+    <h3 class="mt-4">Ingredienti</h3>
+
+    <div th:if="${pizza.ingredients != null and !pizza.ingredients.isEmpty()}">
+        <ul class="list-group mb-4">
+            <li class="list-group-item" th:each="ingredient : ${pizza.ingredients}">
+                <span th:text="${ingredient.name}">Nome Ingrediente</span>
+            </li>
+        </ul>
+    </div>
+    <div th:if="${pizza.ingredients == null or pizza.ingredients.isEmpty()}">
+        <p>Questa pizza non ha ingredienti associati.</p>
+    </div>
+
+    <a th:href="@{/pizzas/edit/{id}(id=${pizza.id})}" class="btn btn-warning mt-2">
+        Modifica ingredienti
+    </a>
+</div>
+
+<script th:src="@{/webjars/bootstrap/5.3.6/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

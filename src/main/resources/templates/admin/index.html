@@ -26,7 +26,7 @@
         </section>
         <section class="menu-box mt-4 shadow-lg row">
             <form class="d-flex align-items-end mb-4 col-6 ms-auto" role="search" th:action="@{/tickets}" method="get">
-                <input class="form-control me-2" type="search" placeholder="Cerca" aria-label="Search" name="keyword" th:value="${search}">
+                <input class="form-control me-2" type="search" placeholder="Cerca" aria-label="Search" name="search" th:value="${search}">
                 <button class="btn btn-primary" type="submit">Cerca</button>
             </form>
 
@@ -38,6 +38,7 @@
                         <th class="scope">Descrizione</th>
                         <th class="scope">Operatore</th>
                         <th class="scope">Stato</th>
+                        <th class="scope">Note</th>
                     </tr>
                 </thead>
                 <tbody class="text-bg-warning p-3">
@@ -47,6 +48,7 @@
                         <td th:text="${ticket.description}"></td>
                         <td th:text="${ticket.user.username}"></td> 
                         <td th:text="${ticket.status}"></td>
+                        <td th:text="${#lists.size(ticket.notes)}"></td>
                         <td>
                             <a th:href="@{/tickets/{id}(id=${ticket.id})}" class="btn btn-primary btn-sm">Dettagli</a>
                             <a th:href="@{/tickets/edit/{id}(id=${ticket.id})}" sec:authorize="hasAuthority('ADMIN')" class="btn btn-warning btn-sm">Edit</a>

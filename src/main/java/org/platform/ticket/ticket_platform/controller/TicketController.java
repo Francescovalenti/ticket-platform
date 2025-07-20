@@ -34,25 +34,19 @@ public class TicketController {
         return "tickets/index";
     }
 
-    @GetMapping("/create")
-    public String create(Model model) {
-        model.addAttribute("ticket", new Ticket());
-        model.addAttribute("users", userRepository.findByRolesNameAndStatus("OPERATOR", UserStatus.ACTIVE));
-        model.addAttribute("categories", categoryRepository.findAll());
-        return "tickets/create";
-    }
+    
 
-    @PostMapping
-    public String store(@Valid @ModelAttribute("ticket") Ticket formTicket, BindingResult bindingResult, Model model) {
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("users", userRepository.findByRolesNameAndStatus("OPERATOR", UserStatus.ACTIVE));
-            model.addAttribute("categories", categoryRepository.findAll());
-            return "tickets/create";
-        }
-        formTicket.setCreatedAt(LocalDateTime.now());
-        ticketRepository.save(formTicket);
-        return "redirect:/admin";
-    }
+    // @PostMapping
+    // public String store(@Valid @ModelAttribute("ticket") Ticket formTicket, BindingResult bindingResult, Model model) {
+    //     if (bindingResult.hasErrors()) {
+    //         model.addAttribute("users", userRepository.findByRolesNameAndStatus("OPERATOR", UserStatus.ACTIVE));
+    //         model.addAttribute("categories", categoryRepository.findAll());
+    //         return "tickets/create";
+    //     }
+    //     formTicket.setCreatedAt(LocalDateTime.now());
+    //     ticketRepository.save(formTicket);
+    //     return "redirect:/admin";
+    // }
 
     @GetMapping("/{id}/edit")
     public String edit(Model model, @PathVariable Integer id) {
