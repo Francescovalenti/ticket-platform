@@ -3,6 +3,7 @@ package org.platform.ticket.ticket_platform.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -37,7 +38,8 @@ public class Ticket {
     private StatusTicket status;
 
     
-    private LocalDateTime createdAt; 
+    @Column(nullable = false, columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
+    private LocalDateTime createdAt = LocalDateTime.now();
 
 
     @ManyToOne

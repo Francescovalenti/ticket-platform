@@ -2,98 +2,72 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="it">
 <head>
     <meta charset="UTF-8">
-    <title th:text="'Pizza: ' + ${pizza.name}">Dettagli Pizza</title>
-    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.6/css/bootstrap.min.css}" />
+    <title th:text="${ticket.title != null ? 'Ticket: ' + ticket.title : 'Dettagli Ticket'}">Dettagli Ticket</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.7/css/bootstrap.min.css}" />
 </head>
-
 <body class="bg-light">
 <div class="container mt-5">
-    <a th:href="@{/pizzas}" class="btn btn-secondary mb-3">&larr; Torna all'elenco</a>
+
+    <a th:href="@{/admin}" class="btn btn-secondary mb-3">&larr; Torna all'elenco</a>
 
     
-    <div class="card shadow">
+    <div class="card shadow mb-4">
         <div class="card-header bg-warning text-center">
-            <h2 th:text="${pizza.name}">Nome Pizza</h2>
+            <h2 th:text="${ticket.title}">Titolo</h2>
         </div>
-        <div class="card-body text-center">
-            <img th:src="${pizza.pic}" class="img-fluid rounded mb-3" style="max-width: 300px;">
+        <div class="card-body">
+            <p><strong>Descrizione:</strong> <span th:text="${ticket.description}">Descrizione</span></p>
+            <p><strong>Categoria:</strong> <span th:text="${ticket.category?.name}">Categoria</span></p>
+            <p><strong>Operatore assegnato:</strong> <span th:text="${ticket.user?.username}">Operatore</span></p>
+            <p><strong>Stato:</strong> <span th:text="${ticket.status}">Stato</span></p>
+            <p><strong>Creato il:</strong>
+                <span th:if="${ticket.createdAt != null}" th:text="${#temporals.format(ticket.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
+                <span th:if="${ticket.createdAt == null}">Data non disponibile</span>
+            </p>
+        </div>
+    </div>
+
+   
+    <div class="mb-5">
+        <h3>Note associate</h3>
+        <div th:if="${noteList != null and #lists.size(noteList) > 0}">
+            <ul class="list-group">
+                <li class="list-group-item" th:each="note : ${noteList}">
+                    <strong th:text="${note.author != null ? note.author : 'Autore sconosciuto'}">Autore</strong> -
+                    <span th:if="${note.createdAt != null}" th:text="${#temporals.format(note.createdAt, 'dd/MM/yyyy HH:mm')}">Data</span><br>
+                    <span th:text="${note.content != null ? note.content : '[Nota vuota]'}">Testo nota</span>
+                </li>
+            </ul>
+        </div>
+        <div th:if="${noteList == null or #lists.size(noteList) == 0}">
+            <p>Nessuna nota associata.</p>
+        </div>
+    </div>
+
+    
+    <div class="card shadow p-4 mb-5">
+        <h4 class="mb-3">Aggiungi una nuova nota</h4>
+        <form th:action="@{/admin/{id}/note(id=${ticket.id})}" th:object="${newNote}" method="post">
+           <div class="mb-3">
+                <label for="text" class="form-label">Autore</label>
+                <input id="text" class="form-control" th:field="*{author}"  ></input>
+                <div class="text-danger" th:if="${#fields.hasErrors('author')}" th:errors="*{author}"></div>
+            </div>
+
            
-            <h4 th:text="${#numbers.formatCurrency(pizza.price)}" class="text-success"></h4>
-          
-        </div>
+            <div class="mb-3">
+                <label for="text" class="form-label">Testo della nota</label>
+                <textarea id="text" class="form-control" th:field="*{content}" rows="4" placeholder="Scrivi la tua nota..."></textarea>
+                <div class="text-danger" th:if="${#fields.hasErrors('content')}" th:errors="*{content}"></div>
+            </div>
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-success">Aggiungi Nota</button>
+            </div>
+        </form>
     </div>
 
-    
-    <h3 class="mt-4">Offerte Speciali</h3>
-
-    <a th:href="@{/specialoffers/create(pizzaId=${pizza.id})}" class="btn btn-success mb-3">
-        Crea nuova offerta speciale
-    </a>
-
-    <div th:if="${offers != null and !offers.isEmpty()}">
-        <ul class="list-group">
-            <li class="list-group-item d-flex justify-content-between align-items-center"
-                th:each="offer : ${offers}">
-                <span>
-                    <strong th:text="${offer.title}"></strong><br>
-                    Dal <span th:text="${offer.startDate}"></span>
-                    al <span th:text="${offer.enDate}"></span>
-                </span>
-                <div class="d-flex gap-2">
-                    <a th:href="@{/specialoffers/{id}/edit(id=${offer.id})}" class="btn btn-primary btn-sm">Modifica</a>
-                    <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal"
-                            th:data-bs-target="'#deleteModal' + ${offer.id}">
-                        Elimina
-                    </button>
-                </div>
-
-                <div class="modal fade" th:id="'deleteModal' + ${offer.id}" tabindex="-1" aria-labelledby="modalLabel"
-                     aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <form th:action="@{/specialoffers/{id}/delete(id=${offer.id})}" method="post">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Conferma Eliminazione</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
-                                </div>
-                                <div class="modal-body">
-                                    Sei sicuro di voler eliminare l’offerta "<strong th:text="${offer.title}"></strong>"?
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
-                                    <button type="submit" class="btn btn-danger">Elimina</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </li>
-        </ul>
-    </div>
-
-    <div th:if="${offers.size() == 0}">
-        <p>Questa pizza non ha offerte speciali.</p>
-    </div>
-
-    
-    <h3 class="mt-4">Ingredienti</h3>
-
-    <div th:if="${pizza.ingredients != null and !pizza.ingredients.isEmpty()}">
-        <ul class="list-group mb-4">
-            <li class="list-group-item" th:each="ingredient : ${pizza.ingredients}">
-                <span th:text="${ingredient.name}">Nome Ingrediente</span>
-            </li>
-        </ul>
-    </div>
-    <div th:if="${pizza.ingredients == null or pizza.ingredients.isEmpty()}">
-        <p>Questa pizza non ha ingredienti associati.</p>
-    </div>
-
-    <a th:href="@{/pizzas/edit/{id}(id=${pizza.id})}" class="btn btn-warning mt-2">
-        Modifica ingredienti
-    </a>
 </div>
 
-<script th:src="@{/webjars/bootstrap/5.3.6/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/5.3.7/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>

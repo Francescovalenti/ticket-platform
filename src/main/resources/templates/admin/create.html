@@ -11,9 +11,11 @@
 
 </head>
 <body>
+
+    
     <div class="container mt-4">
   <h2 class="mb-4">Crea un nuovo Ticket</h2>
-  <form method="post" th:action="@{/admin}" th:object="${admin}">
+  <form method="post"  th:action="@{/admin/create}" th:object="${ticket}">
     
     
     <div class="mb-3">

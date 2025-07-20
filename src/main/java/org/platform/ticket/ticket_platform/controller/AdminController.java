@@ -50,7 +50,7 @@ public class AdminController {
         return "admin/index";
     }
 
-    @GetMapping("{id}/create")
+    @GetMapping("/create")
     public String create(Model model) {
         model.addAttribute("ticket", new Ticket());
         model.addAttribute("users", userRepository.findByRolesNameAndStatus("OPERATOR", UserStatus.ACTIVE));
@@ -59,8 +59,8 @@ public class AdminController {
         return "admin/create";
     }
 
-    @PostMapping("/{id}/create")
-    public String store(@Valid @PathVariable("id")Integer id,@ModelAttribute("ticket") Ticket ticket, BindingResult bindingResult, Model model) {
+    @PostMapping("/create")
+    public String store(@Valid @ModelAttribute("ticket") Ticket ticket, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("ticket", new Ticket());
             model.addAttribute("users", userRepository.findByRolesNameAndStatus("OPERATOR", UserStatus.ACTIVE));
@@ -88,8 +88,8 @@ public class AdminController {
         return "admin/show";
     }
 
-    @PostMapping("/{id}/notes")
-    public String store(@PathVariable Integer id, @Valid @ModelAttribute("newNote") Note note,
+    @PostMapping("/{id}/note")
+    public String store(@Valid @PathVariable Integer id,  @ModelAttribute("newNote") Note note,
             BindingResult bindingResult, Model model) {
 
         Optional<Ticket> optionalTicket = ticketRepository.findById(id);
@@ -101,14 +101,15 @@ public class AdminController {
         if (bindingResult.hasErrors()) {
             model.addAttribute("ticket", ticket);
             model.addAttribute("noteList", ticket.getNotes());
-            return "admin/show";
+            return "admin/index";
         }
 
         note.setTicket(ticket);
+        note.setUser(ticket.getUser());
         note.setId(null);
-        note.setAuthor("Admin");
+        
         note.setCreatedAt(LocalDateTime.now());
         noteRepository.save(note);
-        return "redirect:/admin/";
+        return "redirect:/admin/" + id;
     }
 }
