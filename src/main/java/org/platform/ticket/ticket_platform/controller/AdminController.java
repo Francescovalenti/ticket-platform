@@ -41,13 +41,11 @@ public class AdminController {
     @GetMapping
     public String index(@RequestParam(name = "search", required = false) String search, Model model) {
         List<Ticket> tickets;
-
         if (search != null && !search.isEmpty()) {
             tickets = ticketRepository.findByTitleContaining(search);
         } else {
             tickets = ticketRepository.findAll();
         }
-
         model.addAttribute("tickets", tickets);
         return "admin/index";
     }
@@ -70,7 +68,6 @@ public class AdminController {
             model.addAttribute("note", noteRepository.findAll());
             return "admin/create";
         }
-
         ticketRepository.save(ticket);
         return "redirect:/admin";
     }
@@ -81,25 +78,20 @@ public class AdminController {
         if (ticketOptional.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket non trovato");
         }
-
         Ticket ticket = ticketOptional.get();
         model.addAttribute("ticket", ticket);
         model.addAttribute("noteList", ticket.getNotes());
         model.addAttribute("newNote", new Note());
-
         return "admin/show";
     }
 
     @PostMapping("/{id}/note")
-    public String store(@Valid @PathVariable Integer id, @ModelAttribute("newNote") Note note,
-            BindingResult bindingResult, Model model) {
-
+    public String store(@Valid @PathVariable Integer id, @ModelAttribute("newNote") Note note,BindingResult bindingResult, Model model) {
         Optional<Ticket> optionalTicket = ticketRepository.findById(id);
         if (optionalTicket.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket non trovato");
         }
         Ticket ticket = optionalTicket.get();
-
         if (bindingResult.hasErrors()) {
             model.addAttribute("ticket", ticket);
             model.addAttribute("noteList", ticket.getNotes());
@@ -109,8 +101,7 @@ public class AdminController {
         note.setTicket(ticket);
         note.setUser(ticket.getUser());
         note.setId(null);
-
-        note.setCreatedAt(LocalDateTime.now());
+     note.setCreatedAt(LocalDateTime.now());
         noteRepository.save(note);
         return "redirect:/admin/" + id;
     }
@@ -118,7 +109,7 @@ public class AdminController {
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable("id") Integer id, Model model) {
         Ticket ticket = ticketRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket non trovato"));
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket non trovato"));
         model.addAttribute("ticket", ticket);
         model.addAttribute("users", userRepository.findByRolesNameAndStatus("OPERATOR", UserStatus.ACTIVE));
         model.addAttribute("categories", categoryRepository.findAll());
@@ -133,7 +124,6 @@ public class AdminController {
             model.addAttribute("categories", categoryRepository.findAll());
             return "admin/edit";
         }
-
         formTicket.setId(id);
         ticketRepository.save(formTicket);
         return "redirect:/admin";
