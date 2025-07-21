@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.7/css/bootstrap.min.css}" />
     <title>Profilo Operatore</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.7/css/bootstrap.min.css}" />
 </head>
 <body>
     <header>
@@ -18,36 +18,45 @@
             <span th:text="${errorMessage}"></span>
         </div>
 
-        <form th:action="@{/operator/profile/update}" th:object="${user}" method="post">
-            <div class="mb-3">
-                <label>Username:</label>
-                <input type="text" class="form-control" th:field="*{username}" readonly>
-            </div>
+      <form th:action="@{/operator/profile/update}" th:object="${user}" method="post">
 
-            <div class="mb-3">
-                <label>Email:</label>
-                <input type="email" class="form-control" th:field="*{email}" th:readonly="${!isEditable}" />
-            </div>
+   
+    <input type="hidden" th:field="*{id}" />
 
-            <div class="mb-3">
-                <label>Stato:</label>
-                <select class="form-select" th:field="*{status}" th:disabled="${!isEditable}">
-                    <option value="ACTIVE">Attivo</option>
-                    <option value="NOT_ACTIVE">Non attivo</option>
-                </select>
-              
-                <input type="hidden" th:if="${!isEditable}" th:field="*{status}" />
-            </div>
+   <div class="mb-3">
+    <label>Username:</label>
+    <input type="text" class="form-control" th:field="*{username}" readonly />
+</div>
 
-            <div th:if="${isEditable}">
-                <button type="submit" class="btn btn-primary">Salva modifiche</button>
-                <a class="btn btn-secondary" th:href="@{/operator/profile}">Annulla</a>
-            </div>
+    
+    <input type="hidden" th:field="*{password}" />
 
-            <div th:if="${!isEditable}">
-                <a class="btn btn-warning" th:href="@{/operator/profile/edit}">Modifica profilo</a>
-            </div>
-        </form>
+  
+
+    <div class="mb-3">
+        <label>Email:</label>
+        <input type="email" class="form-control" th:field="*{email}" th:readonly="${!isEditable}" />
+    </div>
+
+    <div class="mb-3">
+        <label>Stato:</label>
+        <select class="form-select" th:field="*{status}" th:disabled="${!isEditable}">
+            <option value="ACTIVE">Attivo</option>
+            <option value="NOT_ACTIVE">Non attivo</option>
+        </select>
+      
+        <input type="hidden" th:if="${!isEditable}" th:field="*{status}" />
+    </div>
+
+    <div th:if="${isEditable}">
+        <button type="submit" class="btn btn-primary">Salva modifiche</button>
+        <a class="btn btn-secondary" th:href="@{/operator/profile}">Annulla</a>
+    </div>
+
+    <div th:if="${!isEditable}">
+        <a class="btn btn-warning" th:href="@{/operator/profile/edit}">Modifica profilo</a>
+    </div>
+</form>
     </div>
 
     <script th:src="@{/webjars/bootstrap/5.3.7/js/bootstrap.bundle.min.js}"></script>

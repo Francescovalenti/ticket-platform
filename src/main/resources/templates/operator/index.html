@@ -1,80 +1,78 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="it">
+
 <head>
     <meta charset="UTF-8">
     <title>I miei Ticket</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.7/css/bootstrap.min.css}" />
 </head>
+
 <body class="bg-light">
- <header>
-     <div  th:replace="~{fragments/operatornavbar :: navbar('Dashboard')}"></div>
- </header>
-    
-<div class="container mt-5">
+    <header>
+        <div th:replace="~{fragments/operatornavbar :: navbar('Dashboard')}"></div>
+    </header>
 
-    <h1 class="mb-4 text-center">Ticket assegnati a te</h1>
-    
-    
+    <div class="container mt-5">
 
+        <h1 class="mb-4 text-center">Ticket assegnati a te</h1>
 
-    <div th:if="${tickets != null and !#lists.isEmpty(tickets)}">
-        <table class="table table-bordered shadow-sm">
-            <thead class="table-warning">
-                <tr>
-                    <th>Titolo</th>
-                    <th>Descrizione</th>
-                    <th>Stato</th>
-                    <th>Categoria</th>
-                    <th>Creato il</th>
-                    <th>Azioni</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="ticket : ${tickets}">
-                    <td th:text="${ticket.title}">Titolo</td>
-                    <td th:text="${ticket.description}">Descrizione</td>
-                    
-                    
-                    <td>
-                        <form th:action="@{'/operator/' + ${ticket.id}}" method="post" style="display:flex;gap:4px;">
-                            <select class="form-select form-select-sm" name="status" style="width:auto;">
-                                <option th:value="TODO"
-                                        th:selected="${ticket.status == T(org.platform.ticket.ticket_platform.model.Ticket.StatusTicket).TODO}">
-                                    TODO
-                                </option>
-                                <option th:value="IN_PROGRESS"
-                                        th:selected="${ticket.status == T(org.platform.ticket.ticket_platform.model.Ticket.StatusTicket).IN_PROGRESS}">
-                                    IN_PROGRESS
-                                </option>
-                                <option th:value="COMPLETED"
-                                        th:selected="${ticket.status == T(org.platform.ticket.ticket_platform.model.Ticket.StatusTicket).COMPLETED}">
-                                    COMPLETED
-                                </option>
-                            </select>
-                            <button type="submit" class="bs-body-color btn-sm" >✔</button>
-                        </form>
-                    </td>
-                    
-                    <td th:text="${ticket.category?.name}">Categoria</td>
-                    <td>
-                        <span th:if="${ticket.createdAt != null}"
-                              th:text="${#temporals.format(ticket.createdAt, 'dd/MM/yyyy HH:mm')}">Data</span>
-                        <span th:if="${ticket.createdAt == null}">-</span>
-                    </td>
-                    <td>
-                        <a th:href="@{/operator/{id}(id=${ticket.id})}" class="btn btn-primary btn-sm">Dettagli</a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <div th:if="${tickets != null and !#lists.isEmpty(tickets)}">
+            <table class="table table-bordered shadow-sm">
+                <thead class="table-warning">
+                    <tr>
+                        <th>Titolo</th>
+                        <th>Descrizione</th>
+                        <th>Stato</th>
+                        <th>Categoria</th>
+                        <th>Creato il</th>
+                        <th>Azioni</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="ticket : ${tickets}">
+                        <td th:text="${ticket.title}">Titolo</td>
+                        <td th:text="${ticket.description}">Descrizione</td>
+
+                        <td>
+                            <form th:action="@{'/operator/' + ${ticket.id}}" method="post"
+                                style="display:flex;gap:4px;">
+                                <select class="form-select form-select-sm" name="status" style="width:auto;">
+                                    <option th:value="TODO" th:selected="${ticket.status.name() == 'TODO'}">
+                                        TODO
+                                    </option>
+                                    <option th:value="IN_PROGRESS"
+                                        th:selected="${ticket.status.name() == 'IN_PROGRESS'}">
+                                        IN_PROGRESS
+                                    </option>
+                                    <option th:value="COMPLETED" th:selected="${ticket.status.name() == 'COMPLETED'}">
+                                        COMPLETED
+                                    </option>
+                                </select>
+                                <button type="submit" class="bs-body-color btn-sm">✔</button>
+                            </form>
+                        </td>
+
+                        <td th:text="${ticket.category?.name}">Categoria</td>
+                        <td>
+                            <span th:if="${ticket.createdAt != null}"
+                                th:text="${#temporals.format(ticket.createdAt, 'dd/MM/yyyy HH:mm')}">Data</span>
+                            <span th:if="${ticket.createdAt == null}">-</span>
+                        </td>
+                        <td>
+                            <a th:href="@{/operator/{id}(id=${ticket.id})}" class="btn btn-primary btn-sm">Dettagli</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div th:if="${tickets == null or #lists.isEmpty(tickets)}" class="alert alert-warning text-center">
+            Nessun ticket assegnato a te al momento.
+        </div>
+
     </div>
 
-    <div th:if="${tickets == null or #lists.isEmpty(tickets)}" class="alert alert-warning text-center">
-        Nessun ticket assegnato a te al momento.
-    </div>
-
-</div>
-
-<script th:src="@{/webjars/bootstrap/5.3.7/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/webjars/bootstrap/5.3.7/js/bootstrap.bundle.min.js}"></script>
 </body>
+
 </html>
