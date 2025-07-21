@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.7/css/bootstrap.min.css}" />
     <title>Profilo Operatore</title>
-   
 </head>
 <body>
     <header>
@@ -27,18 +26,16 @@
 
             <div class="mb-3">
                 <label>Email:</label>
-                <input type="email" class="form-control" th:field="*{email}" th:readonly="${!isEditable}" 
-                       th:classappend="${isEditable} ? 'edit-mode' : ''">
+                <input type="email" class="form-control" th:field="*{email}" th:readonly="${!isEditable}" />
             </div>
 
             <div class="mb-3">
                 <label>Stato:</label>
-                <select class="form-select" th:field="*{status}" th:disabled="${!isEditable}" 
-                        th:classappend="${isEditable} ? 'edit-mode' : ''">
+                <select class="form-select" th:field="*{status}" th:disabled="${!isEditable}">
                     <option value="ACTIVE">Attivo</option>
                     <option value="NOT_ACTIVE">Non attivo</option>
                 </select>
-               
+                <!-- Serve per inviare comunque lo status quando non editabile -->
                 <input type="hidden" th:if="${!isEditable}" th:field="*{status}" />
             </div>
 
