@@ -10,9 +10,13 @@
 </head>
 
 <body>
+   
     <header>
         
+         <div th:replace="fragments/admin-navbar :: navbar('Dashboard')"></div>
     </header>
+
+    
     <main class="container">
         <section class="title row">
             <div class="col-12">
@@ -99,7 +103,11 @@
             </table>
         </section>
     </main>
+
+ <div th:replace="~{fragments/footer :: footer}"></div>
 </body>
+
+ 
 <script th:src="@{/webjars/bootstrap/5.3.7/js/bootstrap.bundle.min.js}"></script>
 
 </html>

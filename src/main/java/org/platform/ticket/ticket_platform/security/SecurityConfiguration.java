@@ -21,7 +21,7 @@ public class SecurityConfiguration {
                 .requestMatchers("/operator/**").hasAuthority("OPERATOR")
                 .anyRequest().permitAll())
                 .formLogin(Customizer.withDefaults())
-                .logout(logout -> logout.logoutSuccessUrl("/"))
+                
                 .cors(cors -> cors.disable())
                 .csrf(csrf -> csrf.disable());
 

@@ -5,7 +5,13 @@
     <title>Modifica Ticket</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.7/css/bootstrap.min.css}" />
 </head>
+ <header>
+        
+         <div th:replace="fragments/admin-navbar :: navbar('Dashboard')"></div>
+    </header>
 <body class="container mt-5">
+    
+   
     <h1 class="mb-4">Modifica Ticket</h1>
 
     <form th:action="@{|/admin/edit/${ticket.id}|}" th:object="${ticket}" method="post">

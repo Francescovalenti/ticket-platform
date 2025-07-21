@@ -14,7 +14,7 @@ public interface TicketRepository  extends JpaRepository <Ticket,Integer>{
       List<Ticket> findByUserRolesNameAndStatus(String roleName, Ticket.StatusTicket status);
       List<Ticket> findByUser(User user);
       List<Ticket> findByCategory_NameIgnoreCase(String name);
-    
+      boolean existsByUserAndStatus(User user, Ticket.StatusTicket status);
 
 
     

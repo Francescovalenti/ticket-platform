@@ -6,6 +6,10 @@
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.7/css/bootstrap.min.css}" />
 </head>
 <body class="bg-light">
+ <header>
+     <div  th:replace="~{fragments/operatornavbar :: navbar('Dashboard')}">></div>
+ </header>
+    
 <div class="container mt-5">
 
     <h1 class="mb-4 text-center">Ticket assegnati a te</h1>

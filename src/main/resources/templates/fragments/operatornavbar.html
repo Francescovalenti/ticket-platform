@@ -11,15 +11,17 @@
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/}">Home</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/tickets}">Ticket</a>
+                     <li class="nav-item">
+                        <a class="nav-link" sec:authorize="hasAuthority('OPERATOR')" th:href="@{/operator/profile}">Profilo</a>
                     </li>
                      <li class="nav-item">
-                        <a class="nav-link" sec:authorize="hasAuthority('ADMIN')" th:href="@{/admin}">Amministrazione</a>
+                        <a class="nav-link" sec:authorize="hasAuthority('OPERATOR')" th:href="@{/operator}">Ticket Dedicati</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" sec:authorize="hasAuthority('OPERATOR')" th:href="@{/operator}">Operatori</a>
+                        <a class="nav-link" th:href="@{/tickets}">Ticket Generali</a>
                     </li>
+                  
+                 
                 </ul>
             </div>
              <div class="user-details">

@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.platform.ticket.ticket_platform.model.Note;
 import org.platform.ticket.ticket_platform.model.Ticket;
+
 import org.platform.ticket.ticket_platform.model.User.UserStatus;
 import org.platform.ticket.ticket_platform.repository.CategoryRepository;
 import org.platform.ticket.ticket_platform.repository.NoteRepository;
@@ -13,6 +14,7 @@ import org.platform.ticket.ticket_platform.repository.TicketRepository;
 import org.platform.ticket.ticket_platform.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -113,34 +115,34 @@ public class AdminController {
         return "redirect:/admin/" + id;
     }
 
-@GetMapping("/edit/{id}")
-public String edit(@PathVariable("id") Integer id, Model model) {
-    Ticket ticket = ticketRepository.findById(id)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket non trovato"));
-    model.addAttribute("ticket", ticket); 
-    model.addAttribute("users", userRepository.findByRolesNameAndStatus("OPERATOR", UserStatus.ACTIVE));
-    model.addAttribute("categories", categoryRepository.findAll());
-    return "admin/edit";
-}
-
-  @PostMapping("/edit/{id}")
-public String update(@Valid @PathVariable("id") Integer id,
-                      @ModelAttribute("ticket") Ticket formTicket,
-                     BindingResult bindingResult,
-                     Model model) {
-    if (bindingResult.hasErrors()) {
+    @GetMapping("/edit/{id}")
+    public String edit(@PathVariable("id") Integer id, Model model) {
+        Ticket ticket = ticketRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket non trovato"));
+        model.addAttribute("ticket", ticket);
         model.addAttribute("users", userRepository.findByRolesNameAndStatus("OPERATOR", UserStatus.ACTIVE));
         model.addAttribute("categories", categoryRepository.findAll());
         return "admin/edit";
     }
 
-    formTicket.setId(id); 
-    ticketRepository.save(formTicket);
-    return "redirect:/admin";
-}
+    @PostMapping("/edit/{id}")
+    public String update(@Valid @PathVariable("id") Integer id, @ModelAttribute("ticket") Ticket formTicket,
+            BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("users", userRepository.findByRolesNameAndStatus("OPERATOR", UserStatus.ACTIVE));
+            model.addAttribute("categories", categoryRepository.findAll());
+            return "admin/edit";
+        }
+
+        formTicket.setId(id);
+        ticketRepository.save(formTicket);
+        return "redirect:/admin";
+    }
+
     @PostMapping("/delete/{id}")
     public String delete(@PathVariable("id") Integer id) {
         ticketRepository.deleteById(id);
         return "redirect:/admin";
     }
+
 }

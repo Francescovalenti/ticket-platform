@@ -5,7 +5,14 @@
     <title th:text="${ticket.title != null ? 'Ticket: ' + ticket.title : 'Dettagli Ticket'}">Dettagli Ticket</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.7/css/bootstrap.min.css}" />
 </head>
+
+   <header>
+        
+         <div th:replace="fragments/admin-navbar :: navbar('Dashboard')"></div>
+    </header>
 <body class="bg-light">
+    
+ 
 <div class="container mt-5">
 
     <a th:href="@{/admin}" class="btn btn-secondary mb-3">&larr; Torna all'elenco</a>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.7/css/bootstrap.min.css}" />
+    <title>Profilo Operatore</title>
+   
+</head>
+<body>
+    <header>
+        <div th:replace="~{fragments/operatornavbar :: navbar('Dashboard')}"></div>
+    </header>
+
+    <div class="container mt-4">
+        <h2>Profilo Operatore</h2>
+
+        <div th:if="${errorMessage}" class="alert alert-danger mt-3 mb-3">
+            <span th:text="${errorMessage}"></span>
+        </div>
+
+        <form th:action="@{/operator/profile/update}" th:object="${user}" method="post">
+            <div class="mb-3">
+                <label>Username:</label>
+                <input type="text" class="form-control" th:field="*{username}" readonly>
+            </div>
+
+            <div class="mb-3">
+                <label>Email:</label>
+                <input type="email" class="form-control" th:field="*{email}" th:readonly="${!isEditable}" 
+                       th:classappend="${isEditable} ? 'edit-mode' : ''">
+            </div>
+
+            <div class="mb-3">
+                <label>Stato:</label>
+                <select class="form-select" th:field="*{status}" th:disabled="${!isEditable}" 
+                        th:classappend="${isEditable} ? 'edit-mode' : ''">
+                    <option value="ACTIVE">Attivo</option>
+                    <option value="NOT_ACTIVE">Non attivo</option>
+                </select>
+               
+                <input type="hidden" th:if="${!isEditable}" th:field="*{status}" />
+            </div>
+
+            <div th:if="${isEditable}">
+                <button type="submit" class="btn btn-primary">Salva modifiche</button>
+                <a class="btn btn-secondary" th:href="@{/operator/profile}">Annulla</a>
+            </div>
+
+            <div th:if="${!isEditable}">
+                <a class="btn btn-warning" th:href="@{/operator/profile/edit}">Modifica profilo</a>
+            </div>
+        </form>
+    </div>
+
+    <script th:src="@{/webjars/bootstrap/5.3.7/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

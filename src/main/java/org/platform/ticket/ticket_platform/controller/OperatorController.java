@@ -36,7 +36,7 @@ public class OperatorController {
     public String index(Model model, Authentication authentication) {
         String username = authentication.getName();
         User user = userRepository.findByUsername(username).orElseThrow();
-        List<Ticket> myTickets = ticketRepository.findByCategoryId(user.getId());
+        List<Ticket> myTickets = ticketRepository.findByUser(user);
 
         model.addAttribute("tickets", myTickets);
         return "operator/index";
@@ -75,8 +75,8 @@ public class OperatorController {
     }
 
     @PostMapping("/{id}/note")
-    public String addNote(@PathVariable Integer id,
-            @Valid @ModelAttribute("newNote") Note note,
+    public String addNote( @Valid  @PathVariable Integer id,
+            @ModelAttribute("newNote") Note note,
             BindingResult bindingResult,
             Authentication authentication,
             Model model) {
@@ -92,6 +92,8 @@ public class OperatorController {
             model.addAttribute("noteList", ticket.getNotes());
             return "operator/show";
         }
+        note.setId(null);
+        note.setAuthor(username);
         note.setTicket(ticket);
         note.setAuthor(user.getUsername());
         note.setCreatedAt(LocalDateTime.now());
@@ -99,4 +101,55 @@ public class OperatorController {
         noteRepository.save(note);
         return "redirect:/operator/" + id;
     }
+     @GetMapping ("profile")
+    public String indexProfile (Model model,Authentication authentication) {
+        String username = authentication.getName();
+        User user= userRepository.findByUsername(username).orElseThrow();
+        model.addAttribute("user", user);
+         model.addAttribute("isEditable", false); // Boolean che serve per gestire le modifica
+
+         return "operator/profile";
+    }
+
+    @GetMapping ("profile/edit")
+    public String edit(@Valid Model model,Authentication authentication){
+        
+        String username = authentication.getName();
+        User user= userRepository.findByUsername(username).orElseThrow();
+        model.addAttribute("user", user);
+         model.addAttribute("isEditable", true); // Boolean che serve per gestire le modifica
+
+         return "operator/profile";
+    }
+
+   @PostMapping("profile/update")
+public String edit(@Valid @ModelAttribute("user") User formUser,
+                   BindingResult bindingResult,
+                   Authentication authentication,
+                   Model model) {
+    if (bindingResult.hasErrors()) {
+        model.addAttribute("isEditable", true);
+        return "operator/profile";
+    }
+    String username = authentication.getName();
+    User user = userRepository.findByUsername(username).orElseThrow();
+
+    
+    boolean hasTodo = ticketRepository.existsByUserAndStatus(user, Ticket.StatusTicket.TODO);
+    boolean hasInProgress = ticketRepository.existsByUserAndStatus(user, Ticket.StatusTicket.IN_PROGRESS);
+
+    if ((hasTodo || hasInProgress) && formUser.getStatus() == User.UserStatus.NOT_ACTIVE) {
+        model.addAttribute("user", user);
+        model.addAttribute("isEditable", true);
+        model.addAttribute("errorMessage", "Non puoi diventare 'Non attivo' se hai ticket aperti!");
+        return "operator/profile";
+    }
+
+    user.setUsername(formUser.getUsername());
+    user.setEmail(formUser.getEmail());
+    user.setStatus(formUser.getStatus());
+    userRepository.save(user);
+
+    return "redirect:/operator/profile";
+}
 }
