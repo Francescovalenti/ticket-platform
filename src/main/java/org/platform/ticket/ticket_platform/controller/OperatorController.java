@@ -101,7 +101,7 @@ public class OperatorController {
         noteRepository.save(note);
         return "redirect:/operator/" + id;
     }
-     @GetMapping ("profile")
+     @GetMapping ("/profile")
     public String indexProfile (@Valid Model model,Authentication authentication) {
         String username = authentication.getName();
         User user= userRepository.findByUsername(username).orElseThrow();
@@ -111,7 +111,7 @@ public class OperatorController {
          return "operator/profile";
     }
 
-    @GetMapping ("profile/edit")
+    @GetMapping ("/profile/edit")
     public String edit(@Valid Model model,Authentication authentication){
         
         String username = authentication.getName();
@@ -123,13 +123,9 @@ public class OperatorController {
     }
 
 
-@PostMapping("profile/update")
-public String edit(@Valid @ModelAttribute("user") User formUser,
-                   BindingResult bindingResult,
-                   Authentication authentication,
-                   Model model) {
-                    System.out.println("===PROFILE  UPDATE CALLED===");
-                    System.out.println("Nuova Email" + formUser.getEmail());
+@PostMapping("/profile/update")
+public String edit(@Valid @ModelAttribute("user") User formUser, BindingResult bindingResult,Authentication authentication,Model model) {
+                   
     if (bindingResult.hasErrors()) {
         model.addAttribute("isEditable", true);
         return "operator/profile";
@@ -140,22 +136,17 @@ public String edit(@Valid @ModelAttribute("user") User formUser,
     boolean hasTodo = ticketRepository.existsByUserAndStatus(user, Ticket.StatusTicket.TODO);
     boolean hasInProgress = ticketRepository.existsByUserAndStatus(user, Ticket.StatusTicket.IN_PROGRESS);
 
-   
-    System.out.println("Email ricevuta: " + formUser.getEmail());
-    System.out.println("Status ricevuto: " + formUser.getStatus());
-
-    if ((hasTodo || hasInProgress) && formUser.getStatus() == User.UserStatus.NOT_ACTIVE) {
+   if ((hasTodo || hasInProgress) && formUser.getStatus() == User.UserStatus.NOT_ACTIVE) {
         model.addAttribute("user", user);
         model.addAttribute("isEditable", true);
         model.addAttribute("errorMessage", "Non puoi diventare 'Non attivo' se hai ticket aperti!");
         return "operator/profile";
     }
-    user.setId(null);
-    user.setUsername(username);
+    user.setUsername(formUser.getUsername());
     user.setEmail(formUser.getEmail());
     user.setStatus(formUser.getStatus());
     userRepository.save(user);
-    userRepository.flush();
+  
     return "redirect:/operator/profile";
 }
 

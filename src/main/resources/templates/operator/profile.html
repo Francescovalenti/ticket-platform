@@ -35,7 +35,7 @@
                     <option value="ACTIVE">Attivo</option>
                     <option value="NOT_ACTIVE">Non attivo</option>
                 </select>
-                <!-- Serve per inviare comunque lo status quando non editabile -->
+              
                 <input type="hidden" th:if="${!isEditable}" th:field="*{status}" />
             </div>
 

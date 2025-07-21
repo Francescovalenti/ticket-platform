@@ -7,18 +7,20 @@
 </head>
 <body class="bg-light">
  <header>
-     <div  th:replace="~{fragments/operatornavbar :: navbar('Dashboard')}">></div>
+     <div  th:replace="~{fragments/operatornavbar :: navbar('Dashboard')}"></div>
  </header>
     
 <div class="container mt-5">
 
     <h1 class="mb-4 text-center">Ticket assegnati a te</h1>
+    
+    
+
 
     <div th:if="${tickets != null and !#lists.isEmpty(tickets)}">
         <table class="table table-bordered shadow-sm">
             <thead class="table-warning">
                 <tr>
-                    
                     <th>Titolo</th>
                     <th>Descrizione</th>
                     <th>Stato</th>
@@ -29,10 +31,30 @@
             </thead>
             <tbody>
                 <tr th:each="ticket : ${tickets}">
-                   
                     <td th:text="${ticket.title}">Titolo</td>
                     <td th:text="${ticket.description}">Descrizione</td>
-                    <td th:text="${ticket.status}">Stato</td>
+                    
+                    
+                    <td>
+                        <form th:action="@{'/operator/' + ${ticket.id}}" method="post" style="display:flex;gap:4px;">
+                            <select class="form-select form-select-sm" name="status" style="width:auto;">
+                                <option th:value="TODO"
+                                        th:selected="${ticket.status == T(org.platform.ticket.ticket_platform.model.Ticket.StatusTicket).TODO}">
+                                    TODO
+                                </option>
+                                <option th:value="IN_PROGRESS"
+                                        th:selected="${ticket.status == T(org.platform.ticket.ticket_platform.model.Ticket.StatusTicket).IN_PROGRESS}">
+                                    IN_PROGRESS
+                                </option>
+                                <option th:value="COMPLETED"
+                                        th:selected="${ticket.status == T(org.platform.ticket.ticket_platform.model.Ticket.StatusTicket).COMPLETED}">
+                                    COMPLETED
+                                </option>
+                            </select>
+                            <button type="submit" class="bs-body-color btn-sm" >✔</button>
+                        </form>
+                    </td>
+                    
                     <td th:text="${ticket.category?.name}">Categoria</td>
                     <td>
                         <span th:if="${ticket.createdAt != null}"
