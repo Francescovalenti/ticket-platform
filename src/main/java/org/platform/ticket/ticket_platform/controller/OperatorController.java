@@ -2,7 +2,7 @@ package org.platform.ticket.ticket_platform.controller;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
+
 
 import org.platform.ticket.ticket_platform.model.Note;
 import org.platform.ticket.ticket_platform.model.Ticket;
@@ -134,11 +134,11 @@ public String updateProfile(
     if (bindingResult.hasErrors()) {
         model.addAttribute("user", user);
         model.addAttribute("isEditable", true);
-        model.addAttribute("errorMessage", "Errore di validazione!");
+      
         return "operator/profile";
     }
 
-    // Controllo: se ci sono ticket aperti, non puoi diventare 'Non attivo'
+    
     boolean hasTodo = ticketRepository.existsByUserAndStatus(user, Ticket.StatusTicket.TODO);
     boolean hasInProgress = ticketRepository.existsByUserAndStatus(user, Ticket.StatusTicket.IN_PROGRESS);
 
