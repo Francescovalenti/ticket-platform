@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import org.platform.ticket.ticket_platform.model.Note;
 import org.platform.ticket.ticket_platform.model.Ticket;
-
+import org.platform.ticket.ticket_platform.model.User;
 import org.platform.ticket.ticket_platform.model.User.UserStatus;
 import org.platform.ticket.ticket_platform.repository.CategoryRepository;
 import org.platform.ticket.ticket_platform.repository.NoteRepository;
@@ -86,7 +86,8 @@ public class AdminController {
     }
 
     @PostMapping("/{id}/note")
-    public String store(@Valid @PathVariable Integer id, @ModelAttribute("newNote") Note note,BindingResult bindingResult, Model model) {
+    public String store(@Valid @PathVariable Integer id, @ModelAttribute("newNote") Note note,
+            BindingResult bindingResult, Model model) {
         Optional<Ticket> optionalTicket = ticketRepository.findById(id);
         if (optionalTicket.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket non trovato");
@@ -101,7 +102,7 @@ public class AdminController {
         note.setTicket(ticket);
         note.setUser(ticket.getUser());
         note.setId(null);
-     note.setCreatedAt(LocalDateTime.now());
+        note.setCreatedAt(LocalDateTime.now());
         noteRepository.save(note);
         return "redirect:/admin/" + id;
     }
@@ -109,7 +110,7 @@ public class AdminController {
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable("id") Integer id, Model model) {
         Ticket ticket = ticketRepository.findById(id)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket non trovato"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket non trovato"));
         model.addAttribute("ticket", ticket);
         model.addAttribute("users", userRepository.findByRolesNameAndStatus("OPERATOR", UserStatus.ACTIVE));
         model.addAttribute("categories", categoryRepository.findAll());
@@ -135,4 +136,22 @@ public class AdminController {
         return "redirect:/admin";
     }
 
+    @GetMapping("/admin/newprofile/{id}")
+    public String editprofile(@PathVariable Integer id,Model model) {
+        model.addAttribute("users", userRepository.findByRolesNameAndStatus("OPERATOR", UserStatus.ACTIVE));
+        return "/newprofile";
+    }
+
+    @PostMapping("/admin/newprofile/{id}")
+    public String updateprofile(@Valid @PathVariable Integer id ,@ModelAttribute("users") User FormUser, BindingResult bindingResult,
+            Model model) {
+        if (bindingResult.hasErrors()) {
+            return "/newprofile";
+        }
+
+        userRepository.save(FormUser);
+        return "redirect:admin";
+    }
+
+   
 }

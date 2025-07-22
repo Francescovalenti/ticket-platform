@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profilo Operatore</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.7/css/bootstrap.min.css}" />
+</head>
+<body>
+    <header>
+        <div th:replace="~{fragments/admin-navbar :: navbar('Dashboard')}"></div>
+    </header>
+
+    <div class="container mt-4">
+        <h2>Profilo Operatore</h2>
+
+        <div th:if="${errorMessage}" class="alert alert-danger mt-3 mb-3">
+            <span th:text="${errorMessage}"></span>
+        </div>
+
+      <form th:action="@{/admin/newprofile}" th:object="${users}" method="post">
+
+   
+    <input type="hidden" th:field="*{id}" />
+
+   <div class="mb-3">
+    <label>Username:</label>
+    <input type="text" class="form-control" th:field="*{username}" readonly />
+</div>
+
+    <div class="mb-3">
+        <label >Password</label>
+    <input type="password" th:field="*{password}" />
+    </div>
+
+  
+
+    <div class="mb-3">
+        <label>Email:</label>
+        <input type="email" class="form-control" th:field="*{email}" th:readonly="${!isEditable}" />
+    </div>
+
+
+      
+        
+
+    <div th:if="${isEditable}">
+        <button type="submit" class="btn btn-primary">Salva Nuovo Profilo</button>
+        <a class="btn btn-secondary" th:href="@{/admin/newprofile}">Annulla</a>
+    </div>
+
+    
+</form>
+    </div>
+
+    <script th:src="@{/webjars/bootstrap/5.3.7/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>
