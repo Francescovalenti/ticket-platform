@@ -1,11 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Home Ticket Platform</title>
 </head>
 <body>
-    CIAO PROVA
+    <h1>Benvenuto nella Ticket Platform</h1>
+
+    
+    <div sec:authorize="hasAuthority('ADMIN')">
+        <a href="/admin"><button>Vai all’area Admin</button></a>
+    </div>
+
+    
+    <div sec:authorize="hasAuthority('OPERATOR')">
+        <a href="/operator"><button>Vai all’area Operatore</button></a>
+    </div>
+
+   
+    
 </body>
 </html>

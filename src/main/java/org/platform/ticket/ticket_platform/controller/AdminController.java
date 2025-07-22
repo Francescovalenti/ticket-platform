@@ -4,23 +4,24 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.platform.ticket.ticket_platform.model.Category;
 import org.platform.ticket.ticket_platform.model.Note;
+import org.platform.ticket.ticket_platform.model.Role;
 import org.platform.ticket.ticket_platform.model.Ticket;
 import org.platform.ticket.ticket_platform.model.User;
 import org.platform.ticket.ticket_platform.model.User.UserStatus;
 import org.platform.ticket.ticket_platform.repository.CategoryRepository;
 import org.platform.ticket.ticket_platform.repository.NoteRepository;
+import org.platform.ticket.ticket_platform.repository.RoleRepository;
 import org.platform.ticket.ticket_platform.repository.TicketRepository;
 import org.platform.ticket.ticket_platform.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-
 import jakarta.validation.Valid;
 
 @Controller
@@ -37,6 +38,9 @@ public class AdminController {
     private UserRepository userRepository;
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
 
     @GetMapping
     public String index(@RequestParam(name = "search", required = false) String search, Model model) {
@@ -130,28 +134,59 @@ public class AdminController {
         return "redirect:/admin";
     }
 
-    @PostMapping("/delete/{id}")
+    @PostMapping("/tickets/delete/{id}")
     public String delete(@PathVariable("id") Integer id) {
         ticketRepository.deleteById(id);
         return "redirect:/admin";
     }
 
-    @GetMapping("/admin/newprofile/{id}")
-    public String editprofile(@PathVariable Integer id,Model model) {
-        model.addAttribute("users", userRepository.findByRolesNameAndStatus("OPERATOR", UserStatus.ACTIVE));
-        return "/newprofile";
+    @GetMapping("/newprofile")
+    public String profile(Model model) {
+        model.addAttribute("users", new User());
+        model.addAttribute("roles", roleRepository.findAll());
+        return "admin/newprofile";
     }
 
-    @PostMapping("/admin/newprofile/{id}")
-    public String updateprofile(@Valid @PathVariable Integer id ,@ModelAttribute("users") User FormUser, BindingResult bindingResult,
+    @PostMapping("/newprofile")
+    public String updateprofile(@Valid @ModelAttribute("users") User FormUser, BindingResult bindingResult,
             Model model) {
         if (bindingResult.hasErrors()) {
-            return "/newprofile";
+            return "admin/newprofile";
         }
 
+        List<Role> operatorRoles = roleRepository.findByName("OPERATOR");
+        if (operatorRoles.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Operation denied");
+        }
+        FormUser.setPassword("{noop}" + FormUser.getPassword());
         userRepository.save(FormUser);
-        return "redirect:admin";
+
+        return "redirect:/admin";
     }
 
-   
+    @GetMapping("/categories")
+    public String category(Model model) {
+        List<Category> categories = categoryRepository.findAll();
+        model.addAttribute("category", new Category());
+        model.addAttribute("categories", categories);
+        return "admin/categories";
+    }
+
+    @PostMapping("/categories")
+    public String newCategory(@Valid @ModelAttribute("category") Category formCategory, BindingResult bindingResult,
+            Model model) {
+        if (bindingResult.hasErrors()) {
+            List<Category> categories = categoryRepository.findAll();
+            model.addAttribute("categories", categories);
+            return "admin/categories";
+        }
+        categoryRepository.save(formCategory);
+        return "redirect:/admin/categories";
+    }
+
+    @PostMapping("/categories/delete/{id}")
+    public String deleteCategory(@PathVariable("id") Integer id) {
+        categoryRepository.deleteById(id);
+        return "redirect:/admin/categories";
+    }
 }

@@ -4,34 +4,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ticket</title>
+    <title>category</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.7/css/bootstrap.min.css}" />
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 
 <body>
-   
+
     <header>
-        
-         <div th:replace="fragments/adminnavbar :: navbar('Dashboard')"></div>
+
+        <div th:replace="fragments/adminnavbar :: navbar('Dashboard')"></div>
     </header>
 
-    
+
     <main class="container">
         <section class="title row">
             <div class="col-12">
-                <h1 class="text-center"><span class="badge text-bg-warning">Ticket</span></h1>
+                <h1 class="text-center"><span class="badge text-bg-warning">Categoria</span></h1>
             </div>
         </section>
         <section class="search-bar row justify-content-center mb-3">
-            <form th:action="@{/tickets}" method="POST" class="col-12 d-flex justify-content-between">
-                <div class="creation-button" sec:authorize="hasAuthority('ADMIN')">
-                    <a th:href="@{/admin/create}" class="btn btn-warning">Crea un nuovo Ticket</a>
-                </div>
+            <form th:action="@{/categorys}" method="POST" class="col-12 d-flex justify-content-between">
+
             </form>
+            <form th:action="@{/admin/categories}" th:object="${category}" method="post" class="mb-3">
+                <div class="mb-3">
+                    <label for="name">Nome categoria:</label>
+                    <input id="name" type="text" class="form-control" th:field="*{name}" required />
+                </div>
+                <button type="submit" class="btn btn-success">Salva categoria</button>
+            </form>
+
         </section>
         <section class="menu-box mt-4 shadow-lg row">
-            <form class="d-flex align-items-end mb-4 col-6 ms-auto" role="search" th:action="@{/tickets}" method="get">
+            <form class="d-flex align-items-end mb-4 col-6 ms-auto" role="search" th:action="@{/categorys}"
+                method="get">
                 <input class="form-control me-2" type="search" placeholder="Cerca" aria-label="Search" name="search"
                     th:value="${search}">
                 <button class="btn btn-primary" type="submit">Cerca</button>
@@ -41,51 +48,40 @@
                 <thead>
                     <tr>
                         <th class="scope">Categoria</th>
-                        <th class="scope">Titolo</th>
-                        <th class="scope">Descrizione</th>
-                        <th class="scope">Operatore</th>
-                        <th class="scope">Stato</th>
-                        <th class="scope">Note</th>
                         <th class="scope">Azioni</th>
+
                     </tr>
                 </thead>
                 <tbody class="text-bg-warning p-3">
-                    <tr th:each="ticket : ${tickets}">
-                        <td th:text="${ticket.category.name}"></td>
-                        <td th:text="${ticket.title}"></td>
-                        <td th:text="${ticket.description}"></td>
-                        <td th:text="${ticket.user.username}"></td>
-                        <td th:text="${ticket.status}"></td>
-                        <td th:text="${#lists.size(ticket.notes)}"></td>
-                        <td>
-                            <a th:href="@{/admin/{id}(id=${ticket.id})}" class="btn btn-primary btn-sm">Dettagli</a>
+                    <tr th:each="category: ${categories}">
+                        <td th:text="${category.name}"></td>
 
-                            <a th:href="@{/admin/edit/{id}(id=${ticket.id})}" sec:authorize="hasAuthority('ADMIN')"
-                                class="btn btn-warning btn-sm">Edit</a>
+                        <td>
+
                             <button sec:authorize="hasAuthority('ADMIN')" type="button"
                                 class="d-inline btn btn-danger btn-sm" data-bs-toggle="modal"
-                                th:data-bs-target="'#delete-modal-' + ${ticket.id}">
+                                th:data-bs-target="'#delete-modal-' + ${category.id}">
                                 Delete
                             </button>
-                            <div class="modal fade" th:id="'delete-modal-' + ${ticket.id}" data-bs-backdrop="static"
+                            <div class="modal fade" th:id="'delete-modal-' + ${category.id}" data-bs-backdrop="static"
                                 data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
                                 aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                                     <div class="modal-content">
                                         <div class="modal-header">
                                             <h1 class="modal-title fs-5" id="staticBackdropLabel">Deletion of <strong
-                                                    th:text="${ticket.title}"></strong></h1>
+                                                    th:text="${category.name}"></strong></h1>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
                                             <p>Sei sicuro di volerlo eliminare? <strong
-                                                    th:text="${ticket.title}"></strong></p>
+                                                    th:text="${category.name}"></strong></p>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary"
                                                 data-bs-dismiss="modal">Close</button>
-                                            <form th:action="@{/admin/tickets/delete/{id}(id=${ticket.id})}" method="post"
+                                            <form th:action="@{/admin/categories/delete/{id}(id=${category.id})}" method="post"
                                                 class="d-inline">
                                                 <button type="submit" class="btn btn-danger">Delete</button>
                                             </form>
@@ -95,8 +91,9 @@
                             </div>
                         </td>
                     </tr>
-                    <tr th:if="${#lists.isEmpty(tickets)}">
-                        <td colspan="6" class="text-center text-danger fw-bold">Nessun Ticket disponibile al momento.
+                    <tr th:if="${#lists.isEmpty(categories)}">
+                        <td colspan="6" class="text-center text-danger fw-bold">Nessuna categoria disponibile al
+                            momento.
                         </td>
                     </tr>
                 </tbody>
@@ -104,10 +101,10 @@
         </section>
     </main>
 
- 
+
 </body>
 
- <div th:replace="~{fragments/footer :: footer}"></div>
+<div th:replace="~{fragments/footer :: footer}"></div>
 <script th:src="@{/webjars/bootstrap/5.3.7/js/bootstrap.bundle.min.js}"></script>
 
 </html>

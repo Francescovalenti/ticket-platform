@@ -11,9 +11,7 @@
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/}">Home</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/tickets}">Ticket</a>
-                    </li>
+                
                    
                     <li class="nav-item">
                         <a class="nav-link" sec:authorize="hasAuthority('ADMIN')" th:href="@{/admin}">Amministrazione</a>
@@ -21,6 +19,9 @@
 
                      <li class="nav-item">
                         <a class="nav-link" sec:authorize="hasAuthority('ADMIN')" th:href="@{/admin/newprofile}">Crea Nuovo Operatore</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" sec:authorize="hasAuthority('ADMIN')" th:href="@{/admin/categories}">Crea Nuove Categorie</a>
                     </li>
                 </ul>
             </div>

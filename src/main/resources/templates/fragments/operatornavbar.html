@@ -24,7 +24,7 @@
                  
                 </ul>
             </div>
-             <div class="user-details">
+             <div class="user-details text-primary">
                 Logged user: <span sec:authentication="name" class="me-3"></span>
                 Roles: <span sec:authentication="principal.authorities" class="me-3"></span>
                 <a th:href="@{/logout}" class="btn btn-primary">Logout</a>
