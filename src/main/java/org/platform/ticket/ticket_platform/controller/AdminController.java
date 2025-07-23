@@ -46,7 +46,7 @@ public class AdminController {
     public String index(@RequestParam(name = "keywords", required = false) String keywords, Model model) {
         List<Ticket> tickets;
         if (keywords != null && !keywords.isEmpty()) {
-        tickets = ticketRepository.findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCaseOrCategory_NameContainingIgnoreCase(keywords, keywords, keywords);
+        tickets = ticketRepository.findByTitleContainingIgnoreCase(keywords);
 
         } else {
             tickets = ticketRepository.findAll();
