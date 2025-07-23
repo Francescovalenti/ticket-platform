@@ -1,80 +1,120 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="it">
+
 <head>
     <meta charset="UTF-8">
     <title th:text="${ticket.title != null ? 'Ticket: ' + ticket.title : 'Dettagli Ticket'}">Dettagli Ticket</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.7/css/bootstrap.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 
-   <header>
-        
-         <div th:replace="fragments/adminnavbar :: navbar('Dashboard')"></div>
+<body class="bg-light d-flex flex-column">
+
+    <header>
+        <div th:replace="fragments/adminnavbar :: navbar('Dashboard')"></div>
     </header>
-<body class="bg-light">
-    
- 
-<div class="container mt-5">
 
-    <a th:href="@{/admin}" class="btn btn-secondary mb-3">&larr; Torna all'elenco</a>
+    <main class="flex-grow-1 container mt-5 menu-box">
 
-    
-    <div class="card shadow mb-4">
-        <div class="card-header bg-warning text-center">
-            <h2 th:text="${ticket.title}">Titolo</h2>
-        </div>
-        <div class="card-body">
-            <p><strong>Descrizione:</strong> <span th:text="${ticket.description}">Descrizione</span></p>
-            <p><strong>Categoria:</strong> <span th:text="${ticket.category?.name}">Categoria</span></p>
-            <p><strong>Operatore assegnato:</strong> <span th:text="${ticket.user?.username}">Operatore</span></p>
-            <p><strong>Stato:</strong> <span th:text="${ticket.status}">Stato</span></p>
-            <p><strong>Creato il:</strong>
-                <span th:if="${ticket.createdAt != null}" th:text="${#temporals.format(ticket.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
-                <span th:if="${ticket.createdAt == null}">Data non disponibile</span>
-            </p>
-        </div>
-    </div>
+        <a th:href="@{/admin}" class="btn btn-secondary mb-3">&larr; Torna all'elenco</a>
 
-   
-    <div class="mb-5">
-        <h3>Note associate</h3>
-        <div th:if="${noteList != null and #lists.size(noteList) > 0}">
-            <ul class="list-group">
-                <li class="list-group-item" th:each="note : ${noteList}">
-                    <strong th:text="${note.author != null ? note.author : 'Autore sconosciuto'}">Autore</strong> -
-                    <span th:if="${note.createdAt != null}" th:text="${#temporals.format(note.createdAt, 'dd/MM/yyyy HH:mm')}">Data</span><br>
-                    <span th:text="${note.content != null ? note.content : '[Nota vuota]'}">Testo nota</span>
-                </li>
-            </ul>
+        
+        <div class="card shadow mb-4">
+            <div class="card-header bg-warning text-center">
+                <h2 th:text="${ticket.title}">Titolo</h2>
+            </div>
+            <div class="card-body">
+                <p><strong>Descrizione:</strong> <span th:text="${ticket.description}">Descrizione</span></p>
+                <p><strong>Categoria:</strong> <span th:text="${ticket.category?.name}">Categoria</span></p>
+                <p><strong>Operatore assegnato:</strong> <span th:text="${ticket.user?.username}">Operatore</span></p>
+                <p><strong>Stato:</strong> <span th:text="${ticket.status}">Stato</span></p>
+                <p><strong>Creato il:</strong>
+                    <span th:if="${ticket.createdAt != null}"
+                        th:text="${#temporals.format(ticket.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
+                    <span th:if="${ticket.createdAt == null}">Data non disponibile</span>
+                </p>
+            </div>
         </div>
-        <div th:if="${noteList == null or #lists.size(noteList) == 0}">
-            <p>Nessuna nota associata.</p>
-        </div>
-    </div>
 
-    
-    <div class="card shadow p-4 mb-5">
-        <h4 class="mb-3">Aggiungi una nuova nota</h4>
-        <form th:action="@{/admin/{id}/note(id=${ticket.id})}" th:object="${newNote}" method="post">
-           <div class="mb-3">
-                <label for="text" class="form-label">Autore</label>
-                <input id="text" class="form-control" th:field="*{author}"  ></input>
-                <div class="text-danger" th:if="${#fields.hasErrors('author')}" th:errors="*{author}"></div>
+        
+        <div class="mb-5">
+            <h3 class="card-header bg-warning text-center">Note associate</h3>
+
+            <div th:if="${noteList != null and #lists.size(noteList) > 0}">
+                <ul class="list-group">
+                    <li class="list-group-item d-flex justify-content-between align-items-center"
+                        th:each="note : ${noteList}">
+                        <div>
+                            <strong th:text="${note.author != null ? note.author : 'Autore sconosciuto'}">Autore</strong> -
+                            <span th:if="${note.createdAt != null}"
+                                  th:text="${#temporals.format(note.createdAt, 'dd/MM/yyyy HH:mm')}">Data</span><br>
+                            <span th:text="${note.content != null ? note.content : '[Nota vuota]'}">Testo nota</span>
+                        </div>
+                        <div>
+                            <a th:href="@{/admin/edit/note/{id}(id=${note.id})}" sec:authorize="hasAuthority('ADMIN')"
+                               class="btn btn-warning btn-sm me-2">Edit</a>
+                            <button sec:authorize="hasAuthority('ADMIN')" type="button" class="btn btn-danger btn-sm"
+                                    data-bs-toggle="modal" th:data-bs-target="'#delete-modal-note-' + ${note.id}">
+                                Delete
+                            </button>
+                        </div>
+
+                        <!-- Modal eliminazione nota -->
+                        <div class="modal fade" th:id="'delete-modal-note-' + ${note.id}" data-bs-backdrop="static"
+                             data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                             aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="staticBackdropLabel">
+                                            Eliminazione nota di <strong th:text="${note.author}"></strong>
+                                        </h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>Sei sicuro di voler eliminare questa nota di
+                                            <strong th:text="${note.author}"></strong>?
+                                        </p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                                        <form th:action="@{/admin/notes/delete/{noteId}(noteId=${note.id})}" method="post" class="d-inline">
+                                            <input type="hidden" name="ticketId" th:value="${ticket.id}" />
+                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
             </div>
 
-           
-            <div class="mb-3">
-                <label for="text" class="form-label">Testo della nota</label>
-                <textarea id="text" class="form-control" th:field="*{content}" rows="4" placeholder="Scrivi la tua nota..."></textarea>
-                <div class="text-danger" th:if="${#fields.hasErrors('content')}" th:errors="*{content}"></div>
+            <div th:if="${noteList == null or #lists.size(noteList) == 0}">
+                <p class="card-header text-center bg-white">Nessuna nota associata.</p>
             </div>
-            <div class="d-flex justify-content-end">
-                <button type="submit" class="btn btn-success">Aggiungi Nota</button>
-            </div>
-        </form>
-    </div>
+        </div>
 
-</div>
+        <!-- Form nuova nota -->
+        <div class="card shadow p-4 mb-5">
+            <h4 class="mb-3">Aggiungi una nuova nota</h4>
+            <form th:action="@{/admin/{id}/note(id=${ticket.id})}" th:object="${newNote}" method="post">
+                <div class="mb-3">
+                    <label for="content" class="form-label">Testo della nota</label>
+                    <textarea id="content" class="form-control" th:field="*{content}" rows="4"
+                              placeholder="Scrivi la tua nota..."></textarea>
+                    <div class="text-danger" th:if="${#fields.hasErrors('content')}" th:errors="*{content}"></div>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-success">Aggiungi Nota</button>
+                </div>
+            </form>
+        </div>
 
-<script th:src="@{/webjars/bootstrap/5.3.7/js/bootstrap.bundle.min.js}"></script>
+    </main>
+     <div th:replace="~{fragments/footer :: footer}"></div>
+    <script th:src="@{/webjars/bootstrap/5.3.7/js/bootstrap.bundle.min.js}"></script>
 </body>
+
 </html>

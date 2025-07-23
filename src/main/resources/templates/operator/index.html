@@ -5,16 +5,19 @@
     <meta charset="UTF-8">
     <title>I miei Ticket</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.7/css/bootstrap.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 
-<body class="bg-light">
+<body class="bg-light  d-flex flex-column">
     <header>
         <div th:replace="~{fragments/operatornavbar :: navbar('Dashboard')}"></div>
     </header>
-
+    <main class="flex-grow-1 container mt-5 menu-box">
     <div class="container mt-5">
 
-        <h1 class="mb-4 text-center">Ticket assegnati a te</h1>
+          <div class="col-12 pt-auto mt-auto">
+                <h1 class="text-center"><span class="badge  text-bg-secondary">Ticket Assegnati</span></h1>
+            </div>
 
         <div th:if="${tickets != null and !#lists.isEmpty(tickets)}">
             <table class="table table-bordered shadow-sm">
@@ -71,8 +74,9 @@
         </div>
 
     </div>
-
-    <script th:src="@{/webjars/bootstrap/5.3.7/js/bootstrap.bundle.min.js}"></script>
+    </main>
+     <div th:replace="~{fragments/footer :: footer}"></div>
+   
 </body>
-
+ <script th:src="@{/webjars/bootstrap/5.3.7/js/bootstrap.bundle.min.js}"></script>
 </html>

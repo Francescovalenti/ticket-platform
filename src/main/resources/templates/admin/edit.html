@@ -4,31 +4,35 @@
     <meta charset="UTF-8">
     <title>Modifica Ticket</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.7/css/bootstrap.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
  <header>
         
          <div th:replace="fragments/adminnavbar :: navbar('Dashboard')"></div>
     </header>
-<body class="container mt-5">
+<body class="bg-light d-flex flex-column">
     
+    <main class="flex-grow-1 container mt-5 menu-box">
    
-    <h1 class="mb-4">Modifica Ticket</h1>
+     <div class="col-12">
+                 <h1 class="text-center"><span class="badge  text-bg-secondary">Modifica Ticket</span></h1>
+            </div>
 
     <form th:action="@{|/admin/edit/${ticket.id}|}" th:object="${ticket}" method="post">
         <div class="mb-3">
-            <label class="form-label">Titolo</label>
+            <label class="form-label"><h5 class=" text-white bg-success rounded ">Modifica Ticket</h5></label>
             <input type="text" class="form-control" th:field="*{title}" required>
             <div th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="text-danger"></div>
         </div>
 
         <div class="mb-3">
-            <label class="form-label">Descrizione</label>
+            <label class="form-label"><h5 class=" text-white bg-success rounded ">Descrizione</h5></label>
             <textarea class="form-control" th:field="*{description}" rows="4" required></textarea>
             <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="text-danger"></div>
         </div>
 
         <div class="mb-3">
-            <label class="form-label">Stato</label>
+            <label class="form-label"><h5 class=" text-white bg-success rounded ">Stato</h5></label>
             <select class="form-select" th:field="*{status}">
                 <option th:each="s : ${T(org.platform.ticket.ticket_platform.model.Ticket.StatusTicket).values()}"
                         th:value="${s}" th:text="${s}"></option>
@@ -37,7 +41,7 @@
         </div>
 
         <div class="mb-3">
-            <label class="form-label">Categoria</label>
+            <label class="form-label"><h5 class=" text-white bg-success rounded ">Categoria</h5></label>
             <select class="form-select" th:field="*{category.id}">
                 <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}"
                     th:selected="${cat.id == ticket.category?.id}"></option>
@@ -46,7 +50,7 @@
         </div>
 
         <div class="mb-3">
-            <label class="form-label">Assegna a </label>
+            <label class="form-label"><h5 class=" text-white bg-success rounded ">Assegna a</h5></label>
             <select class="form-select" th:field="*{user.id}">
                 <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.username}"
                     th:selected="${user.id == ticket.user?.id}"></option>
@@ -59,5 +63,8 @@
             <a th:href="@{/admin}" class="btn btn-secondary">Annulla</a>
         </div>
     </form>
+    </main>
+      <div th:replace="~{fragments/footer :: footer}"></div>
+    <script th:src="@{/webjars/bootstrap/5.3.7/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>

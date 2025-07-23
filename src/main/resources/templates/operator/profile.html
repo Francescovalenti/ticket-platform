@@ -5,14 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profilo Operatore</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.7/css/bootstrap.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
-<body>
+<body class="d-flex flex-column ">
     <header>
         <div th:replace="~{fragments/operatornavbar :: navbar('Dashboard')}"></div>
     </header>
-
+<main class="flex-grow-1 container menu-box">
     <div class="container mt-4">
-        <h2>Profilo Operatore</h2>
+        <h2 class="text-center"><span class="badge  text-bg-secondary ">Profilo Personale</span></h2>
 
         <div th:if="${errorMessage}" class="alert alert-danger mt-3 mb-3">
             <span th:text="${errorMessage}"></span>
@@ -24,7 +25,7 @@
     <input type="hidden" th:field="*{id}" />
 
    <div class="mb-3">
-    <label>Username:</label>
+    <label><h5 class=" text-white bg-success rounded ">Username</h5></label>
     <input type="text" class="form-control" th:field="*{username}" readonly />
 </div>
 
@@ -34,12 +35,12 @@
   
 
     <div class="mb-3">
-        <label>Email:</label>
+        <label><h5 class=" text-white bg-success rounded ">Email</h5></label>
         <input type="email" class="form-control" th:field="*{email}" th:readonly="${!isEditable}" />
     </div>
 
     <div class="mb-3">
-        <label>Stato:</label>
+        <label><h5 class=" text-white bg-success rounded 0">Stato:</h5></label>
         <select class="form-select" th:field="*{status}" th:disabled="${!isEditable}">
             <option value="ACTIVE">Attivo</option>
             <option value="NOT_ACTIVE">Non attivo</option>
@@ -58,7 +59,8 @@
     </div>
 </form>
     </div>
-
+</main>
+     <div th:replace="~{fragments/footer :: footer}"></div>
     <script th:src="@{/webjars/bootstrap/5.3.7/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>

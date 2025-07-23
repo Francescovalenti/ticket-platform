@@ -1,0 +1,13 @@
+body {
+  background-image: url('/img/imgIT.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+}
+.menu-box {
+    background-color: rgba(42, 3, 218, 0.2);
+    padding: 20px;
+    border-radius: 15px;
+  
+}

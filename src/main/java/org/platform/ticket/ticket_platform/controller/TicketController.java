@@ -37,7 +37,7 @@ public class TicketController {
         model.addAttribute("ticket", ticket);
         model.addAttribute("noteList", noteRepository.findByTicketId(id));  
         model.addAttribute("newNote", new Note());  
-        return "admin/show"; 
+        return "tickets/show"; 
     }
 
     @PostMapping("/{id}/note")
@@ -51,7 +51,7 @@ public class TicketController {
         if (bindingResult.hasErrors()) {
             model.addAttribute("ticket", ticket);
             model.addAttribute("noteList", noteRepository.findByTicketId(id));
-            return "admin/show";  
+            return "operator/show";  
         }
 
         

@@ -9,24 +9,23 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 
-<body>
-   
+<body class="d-flex flex-column">
+
     <header>
-        
-         <div th:replace="fragments/adminnavbar :: navbar('Dashboard')"></div>
+        <div th:replace="fragments/adminnavbar :: navbar('Dashboard')"></div>
     </header>
 
-    
-    <main class="container">
+
+    <main class="flex-grow-1 container menu-box">
         <section class="title row">
             <div class="col-12">
-                <h1 class="text-center"><span class="badge text-bg-warning">Ticket</span></h1>
+                <h1 class="text-center"><span class="badge  text-bg-secondary">Ticket</span></h1>
             </div>
         </section>
         <section class="search-bar row justify-content-center mb-3">
             <form th:action="@{/tickets}" method="POST" class="col-12 d-flex justify-content-between">
                 <div class="creation-button" sec:authorize="hasAuthority('ADMIN')">
-                    <a th:href="@{/admin/create}" class="btn btn-warning">Crea un nuovo Ticket</a>
+                    <a th:href="@{/admin/create}" class="btn btn-success">Crea un nuovo Ticket</a>
                 </div>
             </form>
         </section>
@@ -37,7 +36,7 @@
                 <button class="btn btn-primary" type="submit">Cerca</button>
             </form>
 
-            <table class="table table-striped text-bg-warning p-3">
+            <table class="table table-striped table-hover table-bordered bg-white">
                 <thead>
                     <tr>
                         <th class="scope">Categoria</th>
@@ -49,7 +48,7 @@
                         <th class="scope">Azioni</th>
                     </tr>
                 </thead>
-                <tbody class="text-bg-warning p-3">
+                <tbody>
                     <tr th:each="ticket : ${tickets}">
                         <td th:text="${ticket.category.name}"></td>
                         <td th:text="${ticket.title}"></td>
@@ -85,8 +84,8 @@
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary"
                                                 data-bs-dismiss="modal">Close</button>
-                                            <form th:action="@{/admin/tickets/delete/{id}(id=${ticket.id})}" method="post"
-                                                class="d-inline">
+                                            <form th:action="@{/admin/tickets/delete/{id}(id=${ticket.id})}"
+                                                method="post" class="d-inline">
                                                 <button type="submit" class="btn btn-danger">Delete</button>
                                             </form>
                                         </div>
@@ -96,7 +95,7 @@
                         </td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(tickets)}">
-                        <td colspan="6" class="text-center text-danger fw-bold">Nessun Ticket disponibile al momento.
+                        <td colspan="7" class="text-center text-danger fw-bold">Nessun Ticket disponibile al momento.
                         </td>
                     </tr>
                 </tbody>
@@ -104,10 +103,11 @@
         </section>
     </main>
 
- 
+    <div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 
- <div th:replace="~{fragments/footer :: footer}"></div>
+
 <script th:src="@{/webjars/bootstrap/5.3.7/js/bootstrap.bundle.min.js}"></script>
+
 
 </html>

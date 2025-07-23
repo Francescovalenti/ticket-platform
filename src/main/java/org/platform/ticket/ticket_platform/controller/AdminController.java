@@ -89,7 +89,7 @@ public class AdminController {
         return "admin/show";
     }
 
-    @PostMapping("/{id}/note")
+    @PostMapping("/note/{id}")
     public String store(@Valid @PathVariable Integer id, @ModelAttribute("newNote") Note note,
             BindingResult bindingResult, Model model) {
         Optional<Ticket> optionalTicket = ticketRepository.findById(id);
@@ -132,6 +132,12 @@ public class AdminController {
         formTicket.setId(id);
         ticketRepository.save(formTicket);
         return "redirect:/admin";
+    }
+
+    @PostMapping("/notes/delete/{noteId}")
+    public String deleteNote(@PathVariable("noteId") Integer noteId, @RequestParam("ticketId") Integer ticketId) {
+        noteRepository.deleteById(noteId);
+        return "redirect:/admin/" + ticketId;
     }
 
     @PostMapping("/tickets/delete/{id}")
