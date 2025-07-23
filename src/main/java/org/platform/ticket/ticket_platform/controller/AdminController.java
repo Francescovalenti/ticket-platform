@@ -43,13 +43,15 @@ public class AdminController {
     private RoleRepository roleRepository;
 
     @GetMapping
-    public String index(@RequestParam(name = "search", required = false) String search, Model model) {
+    public String index(@RequestParam(name = "keywords", required = false) String keywords, Model model) {
         List<Ticket> tickets;
-        if (search != null && !search.isEmpty()) {
-            tickets = ticketRepository.findByTitleContaining(search);
+        if (keywords != null && !keywords.isEmpty()) {
+        tickets = ticketRepository.findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCaseOrCategory_NameContainingIgnoreCase(keywords, keywords, keywords);
+
         } else {
             tickets = ticketRepository.findAll();
         }
+        model.addAttribute("keywords", keywords);
         model.addAttribute("tickets", tickets);
         return "admin/index";
     }

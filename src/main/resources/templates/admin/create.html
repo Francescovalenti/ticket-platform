@@ -15,17 +15,17 @@
         
          <div th:replace="fragments/adminnavbar :: navbar('Dashboard')"></div>
     </header>
-<body>
+<body class="bg-light d-flex flex-column">
 
-    
+    <main class="flex-grow-1 container mt-5 menu-box">
    
     <div class="container mt-4">
-  <h2 class="mb-4">Crea un nuovo Ticket</h2>
+  <h2  class="text-center"><span class="badge  text-bg-secondary">Crea un Nuovo Ticket</span></h2>
   <form method="post"  th:action="@{/admin/create}" th:object="${ticket}">
     
     
     <div class="mb-3">
-      <label class="form-label">Titolo</label>
+      <label class="form-label"><h5 class=" text-white bg-success rounded ">Titolo</h5></label>
       <input type="text" class="form-control" th:field="*{title}" placeholder="Inserisci un titolo">
       <div class="text-danger" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
     </div>
@@ -35,14 +35,14 @@
   
 
      <div class="mb-3">
-      <label class="form-label">Descrizione</label>
+      <label class="form-label"><h5 class=" text-white bg-success rounded ">Descrizione</h5></label>
       <textarea class="form-control" rows="4" th:field="*{description}" placeholder="Descrivi il problema"></textarea>
       <div class="text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
     </div>
 
 
     <div class="mb-3">
-      <label class="form-label">Categoria</label>
+      <label class="form-label"><h5 class=" text-white bg-success rounded ">Categoria</h5></label>
       <select class="form-select" th:field="*{category.id}">
         <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}">Categoria</option>
       </select>
@@ -50,14 +50,14 @@
 
 
     <div class="mb-3">
-      <label class="form-label">Assegna a</label>
+      <label class="form-label"><h5 class=" text-white bg-success rounded ">Assegna a</h5></label>
       <select class="form-select" th:field="*{user.id}">
         <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.username}">Operatore</option>
       </select>
     </div>
 
     <div class="mb-3">
-      <label class="form-label">Stato</label>
+      <label class="form-label"><h5 class=" text-white bg-success rounded ">Stato</h5></label>
       <select class="form-select" th:field="*{status}">
         <option th:value="TODO">Da fare</option>
         <option th:value="IN_PROGRESS">In corso</option>
@@ -67,11 +67,13 @@
 
     <div class="d-flex justify-content-between">
             <a th:href="@{/admin}" class="btn btn-secondary">Annulla</a>
-            <button type="submit" class="btn btn-success">Salva Ticket</button>
+            <button type="submit" class="btn btn-primary">Salva Ticket</button>
         </div>
   </form>
+  </main>
 </div>
 
-    
+     <div th:replace="~{fragments/footer :: footer}"></div>
+    <script th:src="@{/webjars/bootstrap/5.3.7/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>

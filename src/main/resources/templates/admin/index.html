@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
-
+    
+ 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -30,9 +31,9 @@
             </form>
         </section>
         <section class="menu-box mt-4 shadow-lg row">
-            <form class="d-flex align-items-end mb-4 col-6 ms-auto" role="search" th:action="@{/tickets}" method="get">
-                <input class="form-control me-2" type="search" placeholder="Cerca" aria-label="Search" name="search"
-                    th:value="${search}">
+            <form class="d-flex align-items-end mb-4 col-6 ms-auto" role="search" th:action="@{/admin}" method="get">
+                <input class="form-control me-2" type="search" placeholder="Cerca" aria-label="Search" name="keywords"
+                    th:value="${keywords}">
                 <button class="btn btn-primary" type="submit">Cerca</button>
             </form>
 

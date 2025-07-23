@@ -1,9 +1,11 @@
 <th:block th:fragment="navbar(navbarTitle)">
+   
+
     <nav class="navbar navbar-expand-lg bg-body-tertiary " data-bs-theme="dark">
         <div class="container-fluid">
             <a class="navbar-brand" th:href="@{/}">[[${navbarTitle}]]</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
-                aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation" >
+                aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNavDropdown">
@@ -11,26 +13,30 @@
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/}">Home</a>
                     </li>
-                
-                   
+
+
                     <li class="nav-item">
-                        <a class="nav-link" sec:authorize="hasAuthority('ADMIN')" th:href="@{/admin}">Amministrazione</a>
+                        <a class="nav-link" sec:authorize="hasAuthority('ADMIN')"
+                            th:href="@{/admin}">Amministrazione</a>
                     </li>
 
-                     <li class="nav-item">
-                        <a class="nav-link" sec:authorize="hasAuthority('ADMIN')" th:href="@{/admin/newprofile}">Crea Nuovo Operatore</a>
+                    <li class="nav-item">
+                        <a class="nav-link" sec:authorize="hasAuthority('ADMIN')" th:href="@{/admin/newprofile}">Crea
+                            Nuovo Operatore</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" sec:authorize="hasAuthority('ADMIN')" th:href="@{/admin/categories}">Crea Nuove Categorie</a>
+                        <a class="nav-link" sec:authorize="hasAuthority('ADMIN')" th:href="@{/admin/categories}">Crea
+                            Nuove Categorie</a>
                     </li>
                 </ul>
             </div>
-             <div class="user-details text-primary">
-           Logged user: <span sec:authentication="{user.username}" class="me-3 "></span>  
-            Roles: <span sec:authentication="{user.role.username}" class="me-3"></span> 
+            <div class="user-details text-primary">
+                  Logged user: <span sec:authentication="name" class="me-3"></span>
+                Roles: <span sec:authentication="principal.authorities" class="me-3"></span>
                 <a th:href="@{/logout}" class="btn btn-primary">Logout</a>
             </div>
 
         </div>
     </nav>
+
 </th:block>
