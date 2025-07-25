@@ -129,7 +129,7 @@ public class OperatorController {
         List<Ticket> tickets = ticketRepository.findByUser(userForm);
         boolean hasOpenTickets = false;
 
-        for (Ticket t : tickets) {
+        for (Ticketse: tickets) {
             if (t.getStatus() == Ticket.StatusTicket.TODO || t.getStatus() == Ticket.StatusTicket.IN_PROGRESS) {
                 hasOpenTickets = true;
                 break;
