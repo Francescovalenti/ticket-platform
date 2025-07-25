@@ -61,9 +61,7 @@ public class OperatorController {
     }
 
     @PostMapping("/{id}")
-    public String updateStatus(@Valid @PathVariable Integer id,
-                               @RequestParam("status") Ticket.StatusTicket status,
-                               Authentication authentication) {
+    public String updateStatus(@Valid @PathVariable Integer id, @RequestParam("status") Ticket.StatusTicket status,Authentication authentication) {
         String username = authentication.getName();
         User user = userRepository.findByUsername(username).orElseThrow();
         Ticket ticket = ticketRepository.findById(id)
@@ -77,11 +75,7 @@ public class OperatorController {
     }
 
     @PostMapping("/{id}/note")
-    public String addNote(@Valid @PathVariable Integer id,
-                          @ModelAttribute("newNote") Note note,
-                          BindingResult bindingResult,
-                          Authentication authentication,
-                          Model model) {
+    public String addNote(@Valid @PathVariable Integer id,@ModelAttribute("newNote") Note note,BindingResult bindingResult,Authentication authentication,Model model) {
         String username = authentication.getName();
         User user = userRepository.findByUsername(username).orElseThrow();
         Ticket ticket = ticketRepository.findById(id)
@@ -104,7 +98,6 @@ public class OperatorController {
         return "redirect:/operator/" + id;
     }
 
-
     @GetMapping("/profile")
     public String showProfile(Model model, Authentication authentication) {
         User user = userRepository.findByUsername(authentication.getName()).orElseThrow();
@@ -122,38 +115,38 @@ public class OperatorController {
         return "operator/profile";
     }
 
-  @PostMapping("/profile/update")
-public String updateProfile(
-    @Valid @ModelAttribute("user") User userForm,
-    BindingResult bindingResult,
-    Model model,
-    Authentication authentication
-) {
-    User user = userRepository.findByUsername(authentication.getName()).orElseThrow();
+  
+    @PostMapping("/profile/update")
+    public String updateProfile(@Valid @ModelAttribute("user") User userForm,BindingResult bindingResult,Model model,Authentication authentication) {
+       
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("user", userForm);
+            model.addAttribute("isEditable", true);
+            return "operator/profile";
+        }
+        userRepository.save(userForm);
 
-    if (bindingResult.hasErrors()) {
-        model.addAttribute("user", user);
-        model.addAttribute("isEditable", true);
-      
-        return "operator/profile";
+        List<Ticket> tickets = ticketRepository.findByUser(userForm);
+        boolean hasOpenTickets = false;
+
+        for (Ticket t : tickets) {
+            if (t.getStatus() == Ticket.StatusTicket.TODO || t.getStatus() == Ticket.StatusTicket.IN_PROGRESS) {
+                hasOpenTickets = true;
+                break;
+            }
+        }
+
+        if (hasOpenTickets && userForm.getStatus() == User.UserStatus.NOT_ACTIVE) {
+            model.addAttribute("user", userForm);
+            model.addAttribute("isEditable", true);
+            model.addAttribute("errorMessage", "Non puoi diventare 'Non attivo' se hai ticket aperti!");
+            return "operator/profile";
+        }
+
+         userRepository.save(userForm);
+
+        return "redirect:/operator/profile";
     }
-
-    
-    boolean hasTodo = ticketRepository.existsByUserAndStatus(user, Ticket.StatusTicket.TODO);
-    boolean hasInProgress = ticketRepository.existsByUserAndStatus(user, Ticket.StatusTicket.IN_PROGRESS);
-
-    if ((hasTodo || hasInProgress) && userForm.getStatus() == User.UserStatus.NOT_ACTIVE) {
-        model.addAttribute("user", user);
-        model.addAttribute("isEditable", true);
-        model.addAttribute("errorMessage", "Non puoi diventare 'Non attivo' se hai ticket aperti!");
-        return "operator/profile";
-    }
-
-    user.setEmail(userForm.getEmail());
-    user.setStatus(userForm.getStatus());
-    userRepository.save(user);
-
-    return "redirect:/operator/profile";
 }
-}
+
 
