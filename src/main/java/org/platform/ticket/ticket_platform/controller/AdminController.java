@@ -16,6 +16,7 @@ import org.platform.ticket.ticket_platform.repository.RoleRepository;
 import org.platform.ticket.ticket_platform.repository.TicketRepository;
 import org.platform.ticket.ticket_platform.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.couchbase.CouchbaseProperties.Authentication;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -43,7 +44,7 @@ public class AdminController {
     private RoleRepository roleRepository;
 
     @GetMapping
-    public String index(@RequestParam(name = "keywords", required = false) String keywords, Model model) {
+    public String index(Authentication authentication ,@RequestParam(name = "keywords", required = false) String keywords, Model model) {
         List<Ticket> tickets;
         if (keywords != null && !keywords.isEmpty()) {
         tickets = ticketRepository.findByTitleContainingIgnoreCase(keywords);

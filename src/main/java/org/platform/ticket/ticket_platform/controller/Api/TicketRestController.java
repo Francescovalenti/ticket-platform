@@ -24,13 +24,13 @@ public class TicketRestController {
      @Autowired
      private TicketRepository ticketRepository;
 
-   // Elenco completo
+  
     @GetMapping
     public List<Ticket> index() {
         return ticketRepository.findAll();
     }
     
-    //  Visualizzazione singolo ticket
+ 
     @GetMapping("/{id}")
     public ResponseEntity<Ticket> show(@PathVariable Integer id) {
         Optional<Ticket> ticketAttempt = ticketRepository.findById(id);
@@ -43,12 +43,12 @@ public class TicketRestController {
     }
 
 
-    // Creazione di un solo ticket
+    
     @PostMapping
     public ResponseEntity<Ticket> store(@RequestBody Ticket Ticket) {
         return new ResponseEntity<Ticket>(ticketRepository.save(Ticket), HttpStatus.OK);
     }
-   // Aggiornamento di un ticket
+
     @PutMapping("/{id}")
     public ResponseEntity<Ticket> update(@RequestBody Ticket Ticket, @PathVariable Integer id) {
 
@@ -60,7 +60,7 @@ public class TicketRestController {
         Ticket.setId(id);
         return new ResponseEntity<Ticket>(ticketRepository.save(Ticket), HttpStatus.OK);
     }
-    // Eliminazione di un ticket
+   
     @DeleteMapping("/{id}")
     public ResponseEntity<Ticket> delete(@PathVariable Integer id) {
         if (ticketRepository.findById(id).isEmpty()) {
@@ -70,13 +70,13 @@ public class TicketRestController {
         ticketRepository.deleteById(id);
         return new ResponseEntity<Ticket>(HttpStatus.OK);
     }
-       //  Filtro per categoria 
+    
     @GetMapping("/category")
     public List<Ticket> filterByCategory(@RequestParam("name") String categoryName) {
         return ticketRepository.findByCategory_NameIgnoreCase(categoryName);
     }
 
-    // Filtro per stato
+   
     @GetMapping("/status")
     public List<Ticket> filterByStatus(@RequestParam("status") Ticket.StatusTicket status) {
         return ticketRepository.findByStatus(status);
