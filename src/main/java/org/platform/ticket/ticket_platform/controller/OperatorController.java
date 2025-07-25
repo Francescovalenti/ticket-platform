@@ -1,4 +1,4 @@
-package org.platform.ticket.ticket_platform.controller;
+sepackage org.platform.ticket.ticket_platform.controller;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -129,8 +129,8 @@ public class OperatorController {
         List<Ticket> tickets = ticketRepository.findByUser(userForm);
         boolean hasOpenTickets = false;
 
-        for (Ticketse: tickets) {
-            if (t.getStatus() == Ticket.StatusTicket.TODO || t.getStatus() == Ticket.StatusTicket.IN_PROGRESS) {
+        for (Ticket oper: tickets) {
+            if (oper.getStatus() == Ticket.StatusTicket.TODO || oper.getStatus() == Ticket.StatusTicket.IN_PROGRESS) {
                 hasOpenTickets = true;
                 break;
             }
