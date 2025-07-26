@@ -44,10 +44,11 @@ public class AdminController {
     private RoleRepository roleRepository;
 
     @GetMapping
-    public String index(Authentication authentication ,@RequestParam(name = "keywords", required = false) String keywords, Model model) {
+    public String index(Authentication authentication,
+            @RequestParam(name = "keywords", required = false) String keywords, Model model) {
         List<Ticket> tickets;
         if (keywords != null && !keywords.isEmpty()) {
-        tickets = ticketRepository.findByTitleContainingIgnoreCase(keywords);
+            tickets = ticketRepository.findByTitleContainingIgnoreCase(keywords);
 
         } else {
             tickets = ticketRepository.findAll();
@@ -79,7 +80,7 @@ public class AdminController {
         return "redirect:/admin";
     }
 
-    @GetMapping("/{id}")
+@GetMapping("/{id}")
     public String show(@PathVariable("id") Integer id, Model model) {
         Optional<Ticket> ticketOptional = ticketRepository.findById(id);
         if (ticketOptional.isEmpty()) {
@@ -93,13 +94,10 @@ public class AdminController {
     }
 
     @PostMapping("/note/{id}")
-    public String store(@Valid @PathVariable Integer id, @ModelAttribute("newNote") Note note,
-            BindingResult bindingResult, Model model) {
-        Optional<Ticket> optionalTicket = ticketRepository.findById(id);
-        if (optionalTicket.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket non trovato");
-        }
-        Ticket ticket = optionalTicket.get();
+    public String store(@Valid @PathVariable Integer id, @ModelAttribute("newNote") Note note,BindingResult bindingResult, Model model) {
+       Ticket ticket = ticketRepository.findById(id)
+       .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket non trovato"));
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("ticket", ticket);
             model.addAttribute("noteList", ticket.getNotes());
@@ -125,8 +123,7 @@ public class AdminController {
     }
 
     @PostMapping("/edit/{id}")
-    public String update(@Valid @PathVariable("id") Integer id, @ModelAttribute("ticket") Ticket formTicket,
-            BindingResult bindingResult, Model model) {
+    public String update(@Valid @PathVariable("id") Integer id, @ModelAttribute("ticket") Ticket formTicket, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("users", userRepository.findByRolesNameAndStatus("OPERATOR", UserStatus.ACTIVE));
             model.addAttribute("categories", categoryRepository.findAll());
@@ -185,8 +182,6 @@ public class AdminController {
     public String newCategory(@Valid @ModelAttribute("category") Category formCategory, BindingResult bindingResult,
             Model model) {
         if (bindingResult.hasErrors()) {
-         model.addAttribute("categories", categoryRepository.findAll());
-
             return "admin/categories";
         }
         categoryRepository.save(formCategory);

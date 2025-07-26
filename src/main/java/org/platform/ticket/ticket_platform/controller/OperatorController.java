@@ -1,4 +1,4 @@
-sepackage org.platform.ticket.ticket_platform.controller;
+package org.platform.ticket.ticket_platform.controller;
 
 import java.time.LocalDateTime;
 import java.util.List;
