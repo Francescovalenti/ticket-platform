@@ -185,7 +185,8 @@ public class AdminController {
     public String newCategory(@Valid @ModelAttribute("category") Category formCategory, BindingResult bindingResult,
             Model model) {
         if (bindingResult.hasErrors()) {
-         model.addAttribute("categories", categories);
+         model.addAttribute("categories", categoryRepository.findAll());
+
             return "admin/categories";
         }
         categoryRepository.save(formCategory);
