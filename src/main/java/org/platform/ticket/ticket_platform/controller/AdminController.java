@@ -175,8 +175,7 @@ public class AdminController {
     }
 
     @PostMapping("/categories")
-    public String newCategory(@Valid @ModelAttribute("category") Category formCategory, BindingResult bindingResult,
-            Model model) {
+    public String newCategory(@Valid @ModelAttribute("category") Category formCategory, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("categories", categoryRepository.findAll());
             return "admin/categories";
