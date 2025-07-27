@@ -11,11 +11,13 @@ import org.platform.ticket.ticket_platform.repository.NoteRepository;
 import org.platform.ticket.ticket_platform.repository.TicketRepository;
 import org.platform.ticket.ticket_platform.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import jakarta.validation.Valid;
 
@@ -61,8 +63,7 @@ public class OperatorController {
     @PostMapping("/{id}")
     public String updateStatus(@Valid @PathVariable Integer id, @RequestParam("status") Ticket.StatusTicket status) {
         Ticket ticket = ticketRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Ticket non trovato"));
-
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket non trovato"));
         ticket.setStatus(status);
         ticketRepository.save(ticket);
         return "redirect:/operator/" + id;
@@ -72,7 +73,7 @@ public class OperatorController {
     @PostMapping("/note/{id}")
     public String addNote(@Valid @PathVariable("id") Integer id, @ModelAttribute("newNote") Note formNote, BindingResult bindingResult, Authentication authentication, Model model) {
         Ticket ticket = ticketRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Ticket non trovato"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket non trovato"));
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("ticket", ticket);

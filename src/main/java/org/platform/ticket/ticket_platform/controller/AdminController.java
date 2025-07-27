@@ -2,8 +2,6 @@ package org.platform.ticket.ticket_platform.controller;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
-
 import org.platform.ticket.ticket_platform.model.Category;
 import org.platform.ticket.ticket_platform.model.Note;
 import org.platform.ticket.ticket_platform.model.Role;
@@ -43,13 +41,13 @@ public class AdminController {
     @Autowired
     private RoleRepository roleRepository;
 
+    // visualizzazione dei ticket
     @GetMapping
     public String index(Authentication authentication,
             @RequestParam(name = "keywords", required = false) String keywords, Model model) {
         List<Ticket> tickets;
         if (keywords != null && !keywords.isEmpty()) {
             tickets = ticketRepository.findByTitleContainingIgnoreCase(keywords);
-
         } else {
             tickets = ticketRepository.findAll();
         }
@@ -58,6 +56,7 @@ public class AdminController {
         return "admin/index";
     }
 
+    // creazione ticket
     @GetMapping("/create")
     public String create(Model model) {
         model.addAttribute("ticket", new Ticket());
@@ -68,50 +67,49 @@ public class AdminController {
     }
 
     @PostMapping("/create")
-    public String store(@Valid @ModelAttribute("ticket") Ticket ticket, BindingResult bindingResult, Model model) {
+    public String store(@Valid @ModelAttribute("ticket") Ticket formTicket, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
-            model.addAttribute("ticket", new Ticket());
             model.addAttribute("users", userRepository.findByRolesNameAndStatus("OPERATOR", UserStatus.ACTIVE));
             model.addAttribute("categories", categoryRepository.findAll());
             model.addAttribute("note", noteRepository.findAll());
             return "admin/create";
         }
-        ticketRepository.save(ticket);
+        ticketRepository.save(formTicket);
         return "redirect:/admin";
     }
 
-@GetMapping("/{id}")
+    @GetMapping("/{id}")
     public String show(@PathVariable("id") Integer id, Model model) {
-        Optional<Ticket> ticketOptional = ticketRepository.findById(id);
-        if (ticketOptional.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket non trovato");
-        }
-        Ticket ticket = ticketOptional.get();
+        Ticket ticket = ticketRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket non trovato"));
+
         model.addAttribute("ticket", ticket);
         model.addAttribute("noteList", ticket.getNotes());
         model.addAttribute("newNote", new Note());
         return "admin/show";
     }
 
+    // possibilità di gestione delle note
     @PostMapping("/note/{id}")
-    public String store(@Valid @PathVariable Integer id, @ModelAttribute("newNote") Note note,BindingResult bindingResult, Model model) {
-    Ticket ticket = ticketRepository.findById(id)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket non trovato"));
+    public String store(@Valid @PathVariable Integer id, @ModelAttribute("newNote") Note formNote,
+            BindingResult bindingResult, Model model) {
+        Ticket ticket = ticketRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket non trovato"));
 
-    if (bindingResult.hasErrors()) {
-        model.addAttribute("ticket", ticket);
-        model.addAttribute("noteList", ticket.getNotes());
-        return "admin/show";
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("ticket", ticket);
+            model.addAttribute("noteList", ticket.getNotes());
+            return "admin/show";
+        }
+        formNote.setTicket(ticket);
+        formNote.setUser(ticket.getUser());
+        formNote.setCreatedAt(LocalDateTime.now());
+        noteRepository.save(formNote);
+
+        return "redirect:/admin/" + id;
     }
 
-    note.setTicket(ticket);
-    note.setUser(ticket.getUser());
-    note.setCreatedAt(LocalDateTime.now());
-    noteRepository.save(note);
-
-    return "redirect:/admin/" + id;
-}
-
+    // modifica note
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable("id") Integer id, Model model) {
         Ticket ticket = ticketRepository.findById(id)
@@ -123,7 +121,8 @@ public class AdminController {
     }
 
     @PostMapping("/edit/{id}")
-    public String update(@Valid @PathVariable("id") Integer id, @ModelAttribute("ticket") Ticket formTicket, BindingResult bindingResult, Model model) {
+    public String update(@Valid @PathVariable("id") Integer id, @ModelAttribute("ticket") Ticket formTicket,
+            BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("users", userRepository.findByRolesNameAndStatus("OPERATOR", UserStatus.ACTIVE));
             model.addAttribute("categories", categoryRepository.findAll());
@@ -134,6 +133,7 @@ public class AdminController {
         return "redirect:/admin";
     }
 
+    // cancellazione note
     @PostMapping("/notes/delete/{noteId}")
     public String deleteNote(@PathVariable("noteId") Integer noteId, @RequestParam("ticketId") Integer ticketId) {
         noteRepository.deleteById(noteId);
@@ -146,6 +146,7 @@ public class AdminController {
         return "redirect:/admin";
     }
 
+    // creazione profilo operatore
     @GetMapping("/newprofile")
     public String profile(Model model) {
         model.addAttribute("users", new User());
@@ -170,6 +171,7 @@ public class AdminController {
         return "redirect:/admin";
     }
 
+    // creazione categorie
     @GetMapping("/categories")
     public String category(Model model) {
         List<Category> categories = categoryRepository.findAll();
