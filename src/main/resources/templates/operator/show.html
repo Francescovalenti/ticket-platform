@@ -36,7 +36,7 @@
             <div th:if="${noteList != null and #lists.size(noteList) > 0}">
                 <ul class="list-group">
                     <li class="list-group-item" th:each="note : ${noteList}">
-                        <strong th:text="${note.author != null ? note.author : 'Autore sconosciuto'}">Autore</strong> -
+                       <strong th:text="${note.user != null ? note.user.username : 'Autore sconosciuto'}">Autore</strong> -
                         <span th:if="${note.createdAt != null}" th:text="${#temporals.format(note.createdAt, 'dd/MM/yyyy HH:mm')}">Data</span><br>
                         <span th:text="${note.content != null ? note.content : '[Nota vuota]'}">Testo nota</span>
                     </li>
@@ -51,7 +51,7 @@
        
         <div class="card shadow p-4 mb-5">
             <h4 class="mb-3">Aggiungi una nuova nota</h4>
-            <form th:action="@{/operator/{id}/note(id=${ticket.id})}" th:object="${newNote}" method="post">
+            <form th:action="@{/operator/note/{id}(id=${ticket.id})}" th:object="${newNote}" method="post">
                 
                 <div class="mb-3">
                     <label class="form-label">Testo della nota</label>

@@ -2,7 +2,7 @@ package org.platform.ticket.ticket_platform.controller;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
+import java.util.Optional;
 
 import org.platform.ticket.ticket_platform.model.Note;
 import org.platform.ticket.ticket_platform.model.Ticket;
@@ -32,72 +32,61 @@ public class OperatorController {
     @Autowired
     private NoteRepository noteRepository;
 
+    // lista dei ticket personali
     @GetMapping
     public String index(Model model, Authentication authentication) {
-        String username = authentication.getName();
-        User user = userRepository.findByUsername(username).orElseThrow();
+        Optional<User> userOptional = userRepository.findByUsername(authentication.getName());
+        if (userOptional.isEmpty()) {
+            throw new RuntimeException("Utente non trovato");
+        }
+        User user = userOptional.get();
         List<Ticket> myTickets = ticketRepository.findByUser(user);
-
         model.addAttribute("tickets", myTickets);
-        
+
         return "operator/index";
     }
 
+    // mostra i dettagli dei ticket personali
     @GetMapping("/{id}")
-    public String show(@PathVariable Integer id, Model model, Authentication authentication) {
-        String username = authentication.getName();
-        User user = userRepository.findByUsername(username).orElseThrow();
+    public String show(@PathVariable("id") Integer id, Model model, Authentication authentication) {
         Ticket ticket = ticketRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Ticket non trovato"));
-
-        if (!ticket.getUser().getId().equals(user.getId())) {
-            return "redirect:/operator?error=forbidden";
-        }
-
         model.addAttribute("ticket", ticket);
         model.addAttribute("noteList", ticket.getNotes());
         model.addAttribute("newNote", new Note());
         return "operator/show";
     }
 
+    // metodo per passare lo stato di un ticket da fare a completato
     @PostMapping("/{id}")
-    public String updateStatus(@Valid @PathVariable Integer id, @RequestParam("status") Ticket.StatusTicket status,Authentication authentication) {
-        String username = authentication.getName();
-        User user = userRepository.findByUsername(username).orElseThrow();
+    public String updateStatus(@Valid @PathVariable Integer id, @RequestParam("status") Ticket.StatusTicket status) {
         Ticket ticket = ticketRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Ticket non trovato"));
-        if (!ticket.getUser().getId().equals(user.getId())) {
-            return "redirect:/operator?error=forbidden";
-        }
+
         ticket.setStatus(status);
         ticketRepository.save(ticket);
         return "redirect:/operator/" + id;
     }
 
-    @PostMapping("/{id}/note")
-    public String addNote(@Valid @PathVariable Integer id,@ModelAttribute("newNote") Note note,BindingResult bindingResult,Authentication authentication,Model model) {
-        String username = authentication.getName();
-        User user = userRepository.findByUsername(username).orElseThrow();
+    // possibilità di gestione di note personale
+    @PostMapping("/note/{id}")
+    public String addNote(@Valid @PathVariable("id") Integer id, @ModelAttribute("newNote") Note formNote, BindingResult bindingResult, Authentication authentication, Model model) {
         Ticket ticket = ticketRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Ticket non trovato"));
-        if (!ticket.getUser().getId().equals(user.getId())) {
-            return "redirect:/operator?error=forbidden";
-        }
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("ticket", ticket);
             model.addAttribute("noteList", ticket.getNotes());
             return "operator/show";
         }
-        note.setId(null);
-        note.setAuthor(username);
-        note.setTicket(ticket);
-        note.setAuthor(user.getUsername());
-        note.setCreatedAt(LocalDateTime.now());
-        note.setUser(user);
-        noteRepository.save(note);
+        formNote.setId(null);
+        formNote.setTicket(ticket);
+        formNote.setCreatedAt(LocalDateTime.now());
+        noteRepository.save(formNote);
         return "redirect:/operator/" + id;
     }
 
+    // Profilo personale del operatore.
     @GetMapping("/profile")
     public String showProfile(Model model, Authentication authentication) {
         User user = userRepository.findByUsername(authentication.getName()).orElseThrow();
@@ -106,7 +95,7 @@ public class OperatorController {
         return "operator/profile";
     }
 
-   
+    // Modifica il profilo
     @GetMapping("/profile/edit")
     public String editProfile(Model model, Authentication authentication) {
         User user = userRepository.findByUsername(authentication.getName()).orElseThrow();
@@ -115,27 +104,25 @@ public class OperatorController {
         return "operator/profile";
     }
 
-  
+    // Aggiorna il profilo per il cambiamento di stato.
     @PostMapping("/profile/update")
-    public String updateProfile(@Valid @ModelAttribute("user") User userForm,BindingResult bindingResult,Model model,Authentication authentication) {
-       
-        if (bindingResult.hasErrors()) {
+    public String updateProfile(@Valid @ModelAttribute("user") User userForm, BindingResult bindingResult, Model model,Authentication authentication) {
+      if (bindingResult.hasErrors()) {
             model.addAttribute("user", userForm);
             model.addAttribute("isEditable", true);
             return "operator/profile";
         }
-        userRepository.save(userForm);
 
         List<Ticket> tickets = ticketRepository.findByUser(userForm);
         boolean hasOpenTickets = false;
-
-        for (Ticket oper: tickets) {
+        // modifica se lo stato è attivo
+        for (Ticket oper : tickets) {
             if (oper.getStatus() == Ticket.StatusTicket.TODO || oper.getStatus() == Ticket.StatusTicket.IN_PROGRESS) {
                 hasOpenTickets = true;
                 break;
             }
         }
-
+        // Non si può modificare lo stato in non attivo se ci sono ticket aperti
         if (hasOpenTickets && userForm.getStatus() == User.UserStatus.NOT_ACTIVE) {
             model.addAttribute("user", userForm);
             model.addAttribute("isEditable", true);
@@ -143,10 +130,8 @@ public class OperatorController {
             return "operator/profile";
         }
 
-         userRepository.save(userForm);
+        userRepository.save(userForm);
 
         return "redirect:/operator/profile";
     }
 }
-
-
