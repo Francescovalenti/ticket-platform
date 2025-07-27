@@ -29,15 +29,12 @@ public class AdminController {
 
     @Autowired
     private TicketRepository ticketRepository;
-
     @Autowired
     private NoteRepository noteRepository;
-
     @Autowired
     private UserRepository userRepository;
     @Autowired
     private CategoryRepository categoryRepository;
-
     @Autowired
     private RoleRepository roleRepository;
 
@@ -89,10 +86,9 @@ public class AdminController {
         return "admin/show";
     }
 
-    // possibilità di gestione delle note
+    // possibilità di aggiungere  note
     @PostMapping("/note/{id}")
-    public String store(@Valid @PathVariable Integer id, @ModelAttribute("newNote") Note formNote,
-            BindingResult bindingResult, Model model) {
+    public String store(@Valid @PathVariable Integer id, @ModelAttribute("newNote") Note formNote,BindingResult bindingResult, Model model) {
         Ticket ticket = ticketRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket non trovato"));
 
@@ -121,8 +117,7 @@ public class AdminController {
     }
 
     @PostMapping("/edit/{id}")
-    public String update(@Valid @PathVariable("id") Integer id, @ModelAttribute("ticket") Ticket formTicket,
-            BindingResult bindingResult, Model model) {
+    public String update(@Valid @PathVariable("id") Integer id, @ModelAttribute("ticket") Ticket formTicket,BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("users", userRepository.findByRolesNameAndStatus("OPERATOR", UserStatus.ACTIVE));
             model.addAttribute("categories", categoryRepository.findAll());
@@ -155,8 +150,7 @@ public class AdminController {
     }
 
     @PostMapping("/newprofile")
-    public String updateprofile(@Valid @ModelAttribute("users") User FormUser, BindingResult bindingResult,
-            Model model) {
+    public String updateprofile(@Valid @ModelAttribute("users") User FormUser, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             return "admin/newprofile";
         }
@@ -184,6 +178,7 @@ public class AdminController {
     public String newCategory(@Valid @ModelAttribute("category") Category formCategory, BindingResult bindingResult,
             Model model) {
         if (bindingResult.hasErrors()) {
+            model.addAttribute("categories", categoryRepository.findAll());
             return "admin/categories";
         }
         categoryRepository.save(formCategory);
