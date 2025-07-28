@@ -40,8 +40,7 @@ public class AdminController {
 
     // visualizzazione dei ticket
     @GetMapping
-    public String index(Authentication authentication,
-            @RequestParam(name = "keywords", required = false) String keywords, Model model) {
+    public String index(Authentication authentication,@RequestParam(name = "keywords", required = false) String keywords, Model model) {
         List<Ticket> tickets;
         if (keywords != null && !keywords.isEmpty()) {
             tickets = ticketRepository.findByTitleContainingIgnoreCase(keywords);
