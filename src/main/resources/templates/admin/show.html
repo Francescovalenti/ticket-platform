@@ -24,10 +24,10 @@
                 <h2 th:text="${ticket.title}">Titolo</h2>
             </div>
             <div class="card-body">
-                <p><strong>Descrizione:</strong> <span th:text="${ticket.description}"></span></p>
-                <p><strong>Categoria:</strong> <span th:text="${ticket.category?.name}"></span></p>
-                <p><strong>Operatore assegnato:</strong> <span th:text="${ticket.user?.username}"></span></p>
-                <p><strong>Stato:</strong> <span th:text="${ticket.status}"></span></p>
+                <p><strong>Descrizione:</strong> <span th:text="${ticket.description}">Descrizione</span></p>
+                <p><strong>Categoria:</strong> <span th:text="${ticket.category?.name}">Categoria</span></p>
+                <p><strong>Operatore assegnato:</strong> <span th:text="${ticket.user?.username}">Operatore</span></p>
+                <p><strong>Stato:</strong> <span th:text="${ticket.status}">Stato</span></p>
                 <p><strong>Creato il:</strong>
                     <span th:if="${ticket.createdAt != null}"
                         th:text="${#temporals.format(ticket.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
@@ -51,7 +51,7 @@
                             <span th:text="${note.content != null ? note.content : '[Nota vuota]'}">Testo nota</span>
                         </div>
                         <div>
-                            <a th:href="@{/admin/edit/note/{id}(id=${note.id})}" sec:authorize="hasAuthority('ADMIN')"
+                            <a th:href="@{/admin/edit-note/{id}(id=${note.id})}" sec:authorize="hasAuthority('ADMIN')"
                                class="btn btn-warning btn-sm me-2">Edit</a>
                             <button sec:authorize="hasAuthority('ADMIN')" type="button" class="btn btn-danger btn-sm"
                                     data-bs-toggle="modal" th:data-bs-target="'#delete-modal-note-' + ${note.id}">

@@ -2,6 +2,8 @@ package org.platform.ticket.ticket_platform.controller;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+
 import org.platform.ticket.ticket_platform.model.Category;
 import org.platform.ticket.ticket_platform.model.Note;
 import org.platform.ticket.ticket_platform.model.Role;
@@ -14,8 +16,8 @@ import org.platform.ticket.ticket_platform.repository.RoleRepository;
 import org.platform.ticket.ticket_platform.repository.TicketRepository;
 import org.platform.ticket.ticket_platform.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.couchbase.CouchbaseProperties.Authentication;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -40,7 +42,8 @@ public class AdminController {
 
     // visualizzazione dei ticket
     @GetMapping
-    public String index(Authentication authentication,@RequestParam(name = "keywords", required = false) String keywords, Model model) {
+    public String index(Authentication authentication,
+            @RequestParam(name = "keywords", required = false) String keywords, Model model) {
         List<Ticket> tickets;
         if (keywords != null && !keywords.isEmpty()) {
             tickets = ticketRepository.findByTitleContainingIgnoreCase(keywords);
@@ -85,27 +88,31 @@ public class AdminController {
         return "admin/show";
     }
 
-    // possibilità di aggiungere  note
-    @PostMapping("/note/{id}")
-    public String store(@Valid @PathVariable Integer id, @ModelAttribute("newNote") Note formNote,BindingResult bindingResult, Model model) {
+    // possibilità di aggiungere note
+    @PostMapping("/{id}/note")
+    public String storeNote(@Valid @PathVariable Integer id, @ModelAttribute("newNote") Note formNote,
+            BindingResult bindingResult, Authentication authentication, Model model) {
         Ticket ticket = ticketRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket non trovato"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("ticket", ticket);
             model.addAttribute("noteList", ticket.getNotes());
             return "admin/show";
         }
-        formNote.setTicket(ticket);
-        formNote.setUser(ticket.getUser());
-        formNote.setCreatedAt(LocalDateTime.now());
-        noteRepository.save(formNote);
 
+        formNote.setId(null);
+        formNote.setTicket(ticket);
+        formNote.setAuthor(authentication.getName());
+        formNote.setCreatedAt(LocalDateTime.now());
+        formNote.setUser(ticket.getUser());
+
+        noteRepository.save(formNote);
         return "redirect:/admin/" + id;
     }
 
-    // modifica note
-    @GetMapping("/edit/{id}")
+    // modifica ticket
+    @GetMapping("/edit/ticket/{id}")
     public String edit(@PathVariable("id") Integer id, Model model) {
         Ticket ticket = ticketRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket non trovato"));
@@ -115,8 +122,9 @@ public class AdminController {
         return "admin/edit";
     }
 
-    @PostMapping("/edit/{id}")
-    public String update(@Valid @PathVariable("id") Integer id, @ModelAttribute("ticket") Ticket formTicket,BindingResult bindingResult, Model model) {
+    @PostMapping("/edit/ticket/{id}")
+    public String update(@Valid @PathVariable("id") Integer id, @ModelAttribute("ticket") Ticket formTicket,
+            BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("users", userRepository.findByRolesNameAndStatus("OPERATOR", UserStatus.ACTIVE));
             model.addAttribute("categories", categoryRepository.findAll());
@@ -124,6 +132,36 @@ public class AdminController {
         }
         formTicket.setId(id);
         ticketRepository.save(formTicket);
+        return "redirect:/admin";
+    }
+
+    // modifica note
+    @GetMapping("/edit-note/{id}")
+    public String editNote(@PathVariable("id") Integer id, Model model) {
+        Note note = noteRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket non trovato"));
+
+        model.addAttribute("note", note);
+        return "admin/edit-note";
+    }
+
+    @PostMapping("/edit-note/{id}")
+    public String update(@Valid @PathVariable("id") Integer id, @ModelAttribute("note") Note formNote,BindingResult bindingResult, Model model, Authentication authentication) {
+           Note note = noteRepository.findById(id)
+             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "nota non trovata"));
+        Ticket ticket = note.getTicket();
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("note", formNote);
+            model.addAttribute("ticket", ticket);
+            return "/admin/{id}";
+        }
+        formNote.setId(id);
+        formNote.setTicket(ticket);
+        formNote.setAuthor(authentication.getName());
+        formNote.setCreatedAt(LocalDateTime.now());
+        formNote.setUser(ticket.getUser());
+
+        noteRepository.save(formNote);
         return "redirect:/admin";
     }
 
@@ -149,7 +187,8 @@ public class AdminController {
     }
 
     @PostMapping("/newprofile")
-    public String updateprofile(@Valid @ModelAttribute("users") User FormUser, BindingResult bindingResult, Model model) {
+    public String updateprofile(@Valid @ModelAttribute("users") User FormUser, BindingResult bindingResult,
+            Model model) {
         if (bindingResult.hasErrors()) {
             return "admin/newprofile";
         }
@@ -174,7 +213,8 @@ public class AdminController {
     }
 
     @PostMapping("/categories")
-    public String newCategory(@Valid @ModelAttribute("category") Category formCategory, BindingResult bindingResult, Model model) {
+    public String newCategory(@Valid @ModelAttribute("category") Category formCategory, BindingResult bindingResult,
+            Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("categories", categoryRepository.findAll());
             return "admin/categories";

@@ -81,11 +81,44 @@ public class OperatorController {
             return "operator/show";
         }
         formNote.setId(null);
+          formNote.setAuthor(authentication.getName());
         formNote.setTicket(ticket);
         formNote.setCreatedAt(LocalDateTime.now());
+        formNote.setUser(ticket.getUser());
         noteRepository.save(formNote);
         return "redirect:/operator/" + id;
     }
+
+        @GetMapping("/editnote/{id}")
+    public String editNote(@PathVariable("id") Integer id, Model model) {
+        Note note = noteRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket non trovato"));
+
+        model.addAttribute("note", note);
+        return "operator/editnote";
+    }
+
+    @PostMapping("/editnote/{id}")
+    public String update(@Valid @PathVariable("id") Integer id, @ModelAttribute("note") Note formNote,BindingResult bindingResult, Model model, Authentication authentication) {
+           Note note = noteRepository.findById(id)
+             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "nota non trovata"));
+        Ticket ticket = note.getTicket();
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("note", formNote);
+            model.addAttribute("ticket", ticket);
+            return "/admin/{id}";
+        }
+        formNote.setId(id);
+        formNote.setTicket(ticket);
+        formNote.setAuthor(authentication.getName());
+        formNote.setCreatedAt(LocalDateTime.now());
+        formNote.setUser(ticket.getUser());
+
+        noteRepository.save(formNote);
+        return "redirect:/operator";
+    }
+
+
 
     // Profilo personale del operatore.
     @GetMapping("/profile")
