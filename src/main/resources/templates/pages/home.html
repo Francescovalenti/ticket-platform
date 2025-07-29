@@ -6,8 +6,11 @@
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.7/css/bootstrap.min.css}" />
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
-
+ <header>
+        <div th:replace="~{fragments/homenavbar :: navbar('Dashboard')}"></div>
+    </header>
 <body class="bg-light">
+
     <div class="align-items-center">
         <h1 class="text-success bg-secondary bg-primary text-white text-center">Benvenuto nella Ticket
             Platform</h1>
