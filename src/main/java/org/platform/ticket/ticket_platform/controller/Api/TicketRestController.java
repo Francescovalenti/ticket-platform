@@ -83,7 +83,7 @@ public class TicketRestController {
         return new ResponseEntity<Ticket>(HttpStatus.NOT_FOUND);
     }
 
-// Categoria
+
 @GetMapping("/category")
 public ResponseEntity<List<Ticket>> filterByCategory(@RequestParam("name") String categoryName) {
     List<Ticket> tickets = ticketRepository.findByCategory_NameIgnoreCase(categoryName);
@@ -95,7 +95,6 @@ public ResponseEntity<List<Ticket>> filterByCategory(@RequestParam("name") Strin
     return new ResponseEntity<>(tickets, HttpStatus.OK);
 }
 
-// Stato
 @GetMapping("/status")
 public ResponseEntity<List<Ticket>> filterByStatus(@RequestParam("status") Ticket.StatusTicket status) {
     List<Ticket> tickets = ticketRepository.findByStatus(status);
