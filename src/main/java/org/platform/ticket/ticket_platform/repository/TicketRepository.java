@@ -5,6 +5,7 @@ import java.util.List;
 
 
 import org.platform.ticket.ticket_platform.model.Ticket;
+import org.platform.ticket.ticket_platform.model.Ticket.StatusTicket;
 import org.platform.ticket.ticket_platform.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -18,6 +19,7 @@ public interface TicketRepository  extends JpaRepository <Ticket,Integer>{
       List<Ticket> findByCategory_NameIgnoreCase(String name);
       boolean existsByUserAndStatus(User user, Ticket.StatusTicket status);
       List<Ticket> findByTitleContainingIgnoreCase(String keywords);
+      List<Ticket> findByCategory_NameIgnoreCaseAndStatus(String categoryName, StatusTicket status);
      
 
 
