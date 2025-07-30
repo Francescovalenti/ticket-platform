@@ -27,19 +27,20 @@ public class TicketRestController {
     private TicketRepository ticketRepository;
 
     @GetMapping
-    public ResponseEntity<List<Ticket>> index(@RequestParam(name = "keyword",required=false) String keyword) {
-        List<Ticket>ticket;
+    public ResponseEntity<List<Ticket>> index(@RequestParam(name = "keyword", required = false) String keyword) {
+        List<Ticket> ticket;
         if (keyword != null && !keyword.isEmpty() && !keyword.isBlank()) {
-            ticket= ticketRepository.findByTitleContainingIgnoreCase(keyword);
-            
-        } else {
-        ticket = ticketRepository.findAll();}
+            ticket = ticketRepository.findByTitleContainingIgnoreCase(keyword);
 
-        if (ticket.size() == 0){
+        } else {
+            ticket = ticketRepository.findAll();
+        }
+
+        if (ticket.size() == 0) {
             return new ResponseEntity<List<Ticket>>(HttpStatus.NOT_FOUND);
 
         }
-        return new ResponseEntity<List<Ticket>>(ticket,HttpStatus.OK);
+        return new ResponseEntity<List<Ticket>>(ticket, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -64,7 +65,7 @@ public class TicketRestController {
 
         if (ticketRepository.findById(id).isPresent()) {
             Ticket.setId(id);
-         return new ResponseEntity<Ticket>(ticketRepository.save(Ticket),HttpStatus.OK);
+            return new ResponseEntity<Ticket>(ticketRepository.save(Ticket), HttpStatus.OK);
 
         }
 
@@ -73,24 +74,37 @@ public class TicketRestController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Ticket> delete(@PathVariable Integer id) {
-        Optional <Ticket> ticketAttempt = ticketRepository.findById(id);
+        Optional<Ticket> ticketAttempt = ticketRepository.findById(id);
         if (ticketAttempt.isPresent()) {
             ticketRepository.delete(ticketAttempt.get());
             return new ResponseEntity<Ticket>(HttpStatus.NO_CONTENT);
         }
 
-       
         return new ResponseEntity<Ticket>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("/category")
-public List<Ticket> filterByCategory(@RequestParam("name") String categoryName) {
-    return ticketRepository.findByCategory_NameIgnoreCase(categoryName);
+// Categoria
+@GetMapping("/category")
+public ResponseEntity<List<Ticket>> filterByCategory(@RequestParam("name") String categoryName) {
+    List<Ticket> tickets = ticketRepository.findByCategory_NameIgnoreCase(categoryName);
+
+    if (tickets.size() == 0) {
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    return new ResponseEntity<>(tickets, HttpStatus.OK);
 }
 
+// Stato
 @GetMapping("/status")
-public List<Ticket> filterByStatus(@RequestParam("status") Ticket.StatusTicket status) {
-    return ticketRepository.findByStatus(status);
+public ResponseEntity<List<Ticket>> filterByStatus(@RequestParam("status") Ticket.StatusTicket status) {
+    List<Ticket> tickets = ticketRepository.findByStatus(status);
+
+    if (tickets.size() == 0) {
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    return new ResponseEntity<>(tickets, HttpStatus.OK);
 }
 
 }
