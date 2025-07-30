@@ -2,7 +2,7 @@ package org.platform.ticket.ticket_platform.controller;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
+import java.util.Optional;
 
 import org.platform.ticket.ticket_platform.model.Category;
 import org.platform.ticket.ticket_platform.model.Note;
@@ -21,8 +21,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
+
 import jakarta.validation.Valid;
 
 @Controller
@@ -79,9 +85,11 @@ public class AdminController {
 
     @GetMapping("/{id}")
     public String show(@PathVariable("id") Integer id, Model model) {
-        Ticket ticket = ticketRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket non trovato"));
-
+        Optional<Ticket> ticketOptional = ticketRepository.findById(id);
+        if (ticketOptional.isEmpty()) {
+            throw new RuntimeException("Ticket non trovato");
+        }
+        Ticket ticket = ticketOptional.get();
         model.addAttribute("ticket", ticket);
         model.addAttribute("noteList", ticket.getNotes());
         model.addAttribute("newNote", new Note());
@@ -146,9 +154,10 @@ public class AdminController {
     }
 
     @PostMapping("/edit-note/{id}")
-    public String update(@Valid @PathVariable("id") Integer id, @ModelAttribute("note") Note formNote,BindingResult bindingResult, Model model, Authentication authentication) {
-           Note note = noteRepository.findById(id)
-             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "nota non trovata"));
+    public String update(@Valid @PathVariable("id") Integer id, @ModelAttribute("note") Note formNote,
+            BindingResult bindingResult, Model model, Authentication authentication) {
+        Note note = noteRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "nota non trovata"));
         Ticket ticket = note.getTicket();
         if (bindingResult.hasErrors()) {
             model.addAttribute("note", formNote);
