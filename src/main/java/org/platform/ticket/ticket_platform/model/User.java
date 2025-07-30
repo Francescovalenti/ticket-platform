@@ -3,6 +3,8 @@ package org.platform.ticket.ticket_platform.model;
 import java.util.List;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -34,7 +36,7 @@ public class User {
     @NotBlank(message = "Password is required")
     private String password;
 
-     @NotBlank(message = "Email is required")
+    @NotBlank(message = "Email is required")
     private String email;
 
     @Enumerated(EnumType.STRING)
@@ -51,6 +53,7 @@ public class User {
     private Set<Role> roles;
 
     @OneToMany(mappedBy = "user")
+    @JsonBackReference
     private List<Ticket> tickets;
 
     @OneToMany(mappedBy = "user")
@@ -80,12 +83,12 @@ public class User {
         this.password = password;
     }
 
-    public String getEmail(){
+    public String getEmail() {
         return this.email;
     }
 
-    public void setEmail(String email){
-        this.email=email;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public UserStatus getStatus() {
@@ -96,9 +99,6 @@ public class User {
         this.status = Status;
     }
 
-   
-    
-
     public Set<Role> getRoles() {
         return this.roles;
     }
@@ -107,5 +107,4 @@ public class User {
         this.roles = roles;
     }
 
-   
 }

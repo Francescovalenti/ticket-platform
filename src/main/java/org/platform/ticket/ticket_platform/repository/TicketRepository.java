@@ -1,8 +1,8 @@
 package org.platform.ticket.ticket_platform.repository;
 
-import java.lang.classfile.ClassFile.Option;
+
 import java.util.List;
-import java.util.Optional;
+
 
 import org.platform.ticket.ticket_platform.model.Ticket;
 import org.platform.ticket.ticket_platform.model.User;
@@ -18,8 +18,7 @@ public interface TicketRepository  extends JpaRepository <Ticket,Integer>{
       List<Ticket> findByCategory_NameIgnoreCase(String name);
       boolean existsByUserAndStatus(User user, Ticket.StatusTicket status);
       List<Ticket> findByTitleContainingIgnoreCase(String keywords);
-      Optional<Ticket> findById(Integer id);
-    
+     
 
 
 
