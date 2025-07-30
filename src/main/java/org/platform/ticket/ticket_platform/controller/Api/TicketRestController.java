@@ -77,7 +77,7 @@ public class TicketRestController {
         Optional<Ticket> ticketAttempt = ticketRepository.findById(id);
         if (ticketAttempt.isPresent()) {
             ticketRepository.delete(ticketAttempt.get());
-            return new ResponseEntity<Ticket>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<Ticket>(HttpStatus.OK);
         }
 
         return new ResponseEntity<Ticket>(HttpStatus.NOT_FOUND);
