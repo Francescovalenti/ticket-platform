@@ -118,8 +118,6 @@ public class OperatorController {
         return "redirect:/operator";
     }
 
-
-
     // Profilo personale del operatore.
     @GetMapping("/profile")
     public String showProfile(Model model, Authentication authentication) {
