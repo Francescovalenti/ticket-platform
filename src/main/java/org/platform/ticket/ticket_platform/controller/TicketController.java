@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/tickets")
@@ -36,17 +35,6 @@ public class TicketController {
         return "tickets/show";
     }
 
-    @PostMapping("/{id}/note")
-    public String addNote(@Valid @PathVariable ("id")Integer id,  @ModelAttribute("newNote") Note note,Model model) {
-        Ticket ticket = ticketRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Ticket non trovato"));
-
-        
-            model.addAttribute("ticket", ticket);
-            model.addAttribute("noteList", noteRepository.findByTicketId(id));
-            return "ticket/show";
-        
-
-    }
+  
 
 }

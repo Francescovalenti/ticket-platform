@@ -35,7 +35,7 @@
         <div th:if="${noteList != null and #lists.size(noteList) > 0}">
             <ul class="list-group">
                 <li class="list-group-item" th:each="note : ${noteList}">
-                    <strong th:text="${note.author != null ? note.author : 'Autore sconosciuto'}">Autore</strong> -
+                    <strong th:text="${note.author}">Autore</strong> -
                     <span th:if="${note.createdAt != null}" th:text="${#temporals.format(note.createdAt, 'dd/MM/yyyy HH:mm')}">Data</span><br>
                     <span th:text="${note.content != null ? note.content : '[Nota vuota]'}">Testo nota</span>
                 </li>
