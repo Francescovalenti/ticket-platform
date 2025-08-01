@@ -123,8 +123,17 @@ public class AdminController {
     }
 
     @PostMapping("/tickets/delete/{id}")
-    public String delete(@PathVariable("id") Integer id) {
-        ticketRepository.deleteById(id);
+    public String delete(@PathVariable("id") Integer id,Model model) {
+         Optional<Ticket> ticketOptional = ticketRepository.findById(id);
+          if (ticketOptional.isEmpty()) {
+              throw new RuntimeException("Ticket non trovato");
+          }
+        Ticket ticketToDelete = ticketOptional.get();
+          for (Note note : ticketToDelete.getNotes()){
+            noteRepository.delete(note);
+          }
+          ticketRepository.delete(ticketToDelete);
+        
         return "redirect:/admin";
     }
 

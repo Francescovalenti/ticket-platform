@@ -34,8 +34,9 @@ public class NoteController {
 
     // possibilità di aggiungere note
     @PostMapping("/{id}/note")
-    public String storeNote(@Valid @PathVariable Integer id, @ModelAttribute("newNote") Note formNote,BindingResult bindingResult, Authentication authentication, Model model) {
-      Optional<Ticket> ticketOptional = ticketRepository.findById(id);
+    public String storeNote(@Valid @PathVariable Integer id, @ModelAttribute("newNote") Note formNote,
+            BindingResult bindingResult, Authentication authentication, Model model) {
+        Optional<Ticket> ticketOptional = ticketRepository.findById(id);
         if (ticketOptional.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
@@ -58,9 +59,9 @@ public class NoteController {
     // modifica note per Admin
     @GetMapping("/edit-note/{id}")
     public String editNote(@PathVariable("id") Integer id, Model model) {
-       
+
         Optional<Note> noteOptional = noteRepository.findById(id);
-        if(noteOptional.isEmpty()){
+        if (noteOptional.isEmpty()) {
             throw new ResponseStatusException((HttpStatus.NOT_FOUND));
 
         }
@@ -70,30 +71,36 @@ public class NoteController {
     }
 
     @PostMapping("/edit-note/{id}")
-    public String update(@Valid @PathVariable("id") Integer id, @ModelAttribute("note") Note formNote,BindingResult bindingResult, Model model, Authentication authentication) {
-      Optional<Note> noteOptional = noteRepository.findById(id);
-        if(noteOptional.isEmpty()){
-            throw new ResponseStatusException((HttpStatus.NOT_FOUND));}
-        Ticket ticket = formNote.getTicket();
+    public String update(@Valid @PathVariable("id") Integer id, @ModelAttribute("note") Note formNote,
+            BindingResult bindingResult, Model model, Authentication authentication) {
+
+        Optional<Note> noteOptional = noteRepository.findById(id);
+        if (noteOptional.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        Note note = noteOptional.get();
+        Ticket ticket = note.getTicket(); 
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("note", formNote);
             model.addAttribute("ticket", ticket);
             return "/admin/{id}";
         }
-        Note note = noteOptional.get();
+
         formNote.setId(id);
-        formNote.setTicket(ticket);
-         formNote.setAuthor(note.getAuthor());
+        formNote.setTicket(ticket); 
+        formNote.setAuthor(note.getAuthor());
         formNote.setCreatedAt(LocalDateTime.now());
         formNote.setUser(ticket.getUser());
         noteRepository.save(formNote);
         return "redirect:/admin";
-    
-}
+    }
 
     // possibilità di gestione di note personale del operatore
     @PostMapping("/note/{id}")
-    public String addNote(@Valid @PathVariable("id") Integer id, @ModelAttribute("newNote") Note formNote,  BindingResult bindingResult, Authentication authentication, Model model) {
+    public String addNote(@Valid @PathVariable("id") Integer id, @ModelAttribute("newNote") Note formNote,
+            BindingResult bindingResult, Authentication authentication, Model model) {
         Optional<Ticket> ticketOptional = ticketRepository.findById(id);
         if (ticketOptional.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -118,46 +125,52 @@ public class NoteController {
     @GetMapping("/editnote/{id}")
     public String editNoteOper(@PathVariable("id") Integer id, Model model) {
         Optional<Note> noteOptional = noteRepository.findById(id);
-        if(noteOptional.isEmpty()){
-            throw new ResponseStatusException((HttpStatus.NOT_FOUND));}
+        if (noteOptional.isEmpty()) {
+            throw new ResponseStatusException((HttpStatus.NOT_FOUND));
+        }
         Note note = noteOptional.get();
         model.addAttribute("note", note);
         return "operator/editnote";
     }
+
     @PostMapping("/editnote/{id}")
-    public String updateOper(@Valid @PathVariable("id") Integer id, @ModelAttribute("note") Note formNote,BindingResult bindingResult, Model model, Authentication authentication) {
-      Optional<Note> noteOptional = noteRepository.findById(id);
-        if(noteOptional.isEmpty()){
-            throw new ResponseStatusException((HttpStatus.NOT_FOUND));}
-        Ticket ticket = formNote.getTicket();
+    public String updateOper(@Valid @PathVariable("id") Integer id, @ModelAttribute("note") Note formNote,
+            BindingResult bindingResult, Model model, Authentication authentication) {
+        Optional<Note> noteOptional = noteRepository.findById(id);
+        if (noteOptional.isEmpty()) {
+            throw new ResponseStatusException((HttpStatus.NOT_FOUND));
+        }
+        Note note = noteOptional.get();
+        Ticket ticket = note.getTicket();
         if (bindingResult.hasErrors()) {
             model.addAttribute("note", formNote);
             model.addAttribute("ticket", ticket);
             return "/operator/{id}";
         }
-        Note note = noteOptional.get();
+
         formNote.setId(id);
         formNote.setTicket(ticket);
-         formNote.setAuthor(note.getAuthor());
+        formNote.setAuthor(note.getAuthor());
         formNote.setCreatedAt(LocalDateTime.now());
         formNote.setUser(ticket.getUser());
         noteRepository.save(formNote);
-        return "redirect:/operator";
-    
-}
+       return "redirect:/operator/" + ticket.getId();
+
+    }
 
     // cancellazione note
     @PostMapping("/delete/{noteId}")
-    public String deleteNote(@Valid @PathVariable("noteId") Integer noteId, @RequestParam("ticketId") Integer ticketId) {
+    public String deleteNote(@Valid @PathVariable("noteId") Integer noteId,
+            @RequestParam("ticketId") Integer ticketId) {
         noteRepository.deleteById(noteId);
         return "redirect:/admin/" + ticketId;
     }
 
-      @PostMapping("/deleteOper/{noteId}")
-    public String deleteNoteOper(@Valid @PathVariable("noteId") Integer noteId, @RequestParam("ticketId") Integer ticketId) {
+    @PostMapping("/deleteOper/{noteId}")
+    public String deleteNoteOper(@Valid @PathVariable("noteId") Integer noteId,
+            @RequestParam("ticketId") Integer ticketId) {
         noteRepository.deleteById(noteId);
         return "redirect:/operator/" + ticketId;
     }
-
 
 }
