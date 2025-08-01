@@ -2,6 +2,8 @@ package org.platform.ticket.ticket_platform.controller;
 
 import java.time.LocalDateTime;
 
+import java.util.Optional;
+
 import org.platform.ticket.ticket_platform.model.Note;
 import org.platform.ticket.ticket_platform.model.Ticket;
 import org.platform.ticket.ticket_platform.repository.NoteRepository;
@@ -32,10 +34,13 @@ public class NoteController {
 
     // possibilità di aggiungere note
     @PostMapping("/{id}/note")
-    public String storeNote(@Valid @PathVariable Integer id, @ModelAttribute("newNote") Note formNote,
-            BindingResult bindingResult, Authentication authentication, Model model) {
-        Ticket ticket = ticketRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    public String storeNote(@Valid @PathVariable Integer id, @ModelAttribute("newNote") Note formNote,BindingResult bindingResult, Authentication authentication, Model model) {
+      Optional<Ticket> ticketOptional = ticketRepository.findById(id);
+        if (ticketOptional.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        Ticket ticket = ticketOptional.get();
         if (bindingResult.hasErrors()) {
             model.addAttribute("ticket", ticket);
             model.addAttribute("noteList", ticket.getNotes());
@@ -53,24 +58,29 @@ public class NoteController {
     // modifica note per Admin
     @GetMapping("/edit-note/{id}")
     public String editNote(@PathVariable("id") Integer id, Model model) {
-        Note note = noteRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket non trovato"));
+       
+        Optional<Note> noteOptional = noteRepository.findById(id);
+        if(noteOptional.isEmpty()){
+            throw new ResponseStatusException((HttpStatus.NOT_FOUND));
 
+        }
+        Note note = noteOptional.get();
         model.addAttribute("note", note);
         return "admin/edit-note";
     }
 
     @PostMapping("/edit-note/{id}")
-    public String update(@Valid @PathVariable("id") Integer id, @ModelAttribute("note") Note formNote,
-            BindingResult bindingResult, Model model, Authentication authentication) {
-        Note note = noteRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "nota non trovata"));
-        Ticket ticket = note.getTicket();
+    public String update(@Valid @PathVariable("id") Integer id, @ModelAttribute("note") Note formNote,BindingResult bindingResult, Model model, Authentication authentication) {
+      Optional<Note> noteOptional = noteRepository.findById(id);
+        if(noteOptional.isEmpty()){
+            throw new ResponseStatusException((HttpStatus.NOT_FOUND));}
+        Ticket ticket = formNote.getTicket();
         if (bindingResult.hasErrors()) {
             model.addAttribute("note", formNote);
             model.addAttribute("ticket", ticket);
             return "/admin/{id}";
         }
+        Note note = noteOptional.get();
         formNote.setId(id);
         formNote.setTicket(ticket);
          formNote.setAuthor(note.getAuthor());
@@ -78,15 +88,18 @@ public class NoteController {
         formNote.setUser(ticket.getUser());
         noteRepository.save(formNote);
         return "redirect:/admin";
-    }
+    
+}
 
     // possibilità di gestione di note personale del operatore
     @PostMapping("/note/{id}")
-    public String addNote(@Valid @PathVariable("id") Integer id, @ModelAttribute("newNote") Note formNote,
-            BindingResult bindingResult, Authentication authentication, Model model) {
-        Ticket ticket = ticketRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket non trovato"));
+    public String addNote(@Valid @PathVariable("id") Integer id, @ModelAttribute("newNote") Note formNote,  BindingResult bindingResult, Authentication authentication, Model model) {
+        Optional<Ticket> ticketOptional = ticketRepository.findById(id);
+        if (ticketOptional.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
 
+        Ticket ticket = ticketOptional.get();
         if (bindingResult.hasErrors()) {
             model.addAttribute("ticket", ticket);
             model.addAttribute("noteList", ticket.getNotes());
@@ -104,32 +117,34 @@ public class NoteController {
     // possibilità di modifica note per operatore
     @GetMapping("/editnote/{id}")
     public String editNoteOper(@PathVariable("id") Integer id, Model model) {
-        Note note = noteRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket non trovato"));
+        Optional<Note> noteOptional = noteRepository.findById(id);
+        if(noteOptional.isEmpty()){
+            throw new ResponseStatusException((HttpStatus.NOT_FOUND));}
+        Note note = noteOptional.get();
         model.addAttribute("note", note);
         return "operator/editnote";
     }
-
-    @PostMapping("/editnote/{id}")
-    public String updateOper(@Valid @PathVariable("id") Integer id, @ModelAttribute("note") Note formNote,
-            BindingResult bindingResult, Model model, Authentication authentication) {
-        Note note = noteRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "nota non trovata"));
-        Ticket ticket = note.getTicket();
+    @PostMapping("/edit-note/{id}")
+    public String updateOper(@Valid @PathVariable("id") Integer id, @ModelAttribute("note") Note formNote,BindingResult bindingResult, Model model, Authentication authentication) {
+      Optional<Note> noteOptional = noteRepository.findById(id);
+        if(noteOptional.isEmpty()){
+            throw new ResponseStatusException((HttpStatus.NOT_FOUND));}
+        Ticket ticket = formNote.getTicket();
         if (bindingResult.hasErrors()) {
             model.addAttribute("note", formNote);
             model.addAttribute("ticket", ticket);
             return "/operator/{id}";
         }
+        Note note = noteOptional.get();
         formNote.setId(id);
         formNote.setTicket(ticket);
-        formNote.setAuthor(note.getAuthor());
+         formNote.setAuthor(note.getAuthor());
         formNote.setCreatedAt(LocalDateTime.now());
         formNote.setUser(ticket.getUser());
-
         noteRepository.save(formNote);
         return "redirect:/operator";
-    }
+    
+}
 
     // cancellazione note
     @PostMapping("/delete/{noteId}")
