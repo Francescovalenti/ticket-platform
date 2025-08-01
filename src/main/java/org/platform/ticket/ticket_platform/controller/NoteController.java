@@ -124,7 +124,7 @@ public class NoteController {
         model.addAttribute("note", note);
         return "operator/editnote";
     }
-    @PostMapping("/edit-note/{id}")
+    @PostMapping("/editnote/{id}")
     public String updateOper(@Valid @PathVariable("id") Integer id, @ModelAttribute("note") Note formNote,BindingResult bindingResult, Model model, Authentication authentication) {
       Optional<Note> noteOptional = noteRepository.findById(id);
         if(noteOptional.isEmpty()){

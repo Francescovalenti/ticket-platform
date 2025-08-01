@@ -1,6 +1,5 @@
 package org.platform.ticket.ticket_platform.controller;
 
-import java.time.LocalDateTime;
 import org.platform.ticket.ticket_platform.model.Note;
 import org.platform.ticket.ticket_platform.model.Ticket;
 import org.platform.ticket.ticket_platform.repository.NoteRepository;
@@ -8,7 +7,6 @@ import org.platform.ticket.ticket_platform.repository.TicketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
@@ -39,22 +37,16 @@ public class TicketController {
     }
 
     @PostMapping("/{id}/note")
-    public String addNote(@Valid @PathVariable ("id")Integer id,  @ModelAttribute("newNote") Note note, BindingResult bindingResult,Model model) {
+    public String addNote(@Valid @PathVariable ("id")Integer id,  @ModelAttribute("newNote") Note note,Model model) {
         Ticket ticket = ticketRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Ticket non trovato"));
 
-        if (bindingResult.hasErrors()) {
+        
             model.addAttribute("ticket", ticket);
             model.addAttribute("noteList", noteRepository.findByTicketId(id));
-            return "operator/show";
-        }
+            return "ticket/show";
+        
 
-        note.setTicket(ticket);
-        note.setCreatedAt(LocalDateTime.now());
-        note.setAuthor("admin");
-        noteRepository.save(note);
-
-        return "redirect:/tickets/" + id;
     }
 
 }
