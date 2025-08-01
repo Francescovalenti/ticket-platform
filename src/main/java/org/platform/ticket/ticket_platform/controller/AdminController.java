@@ -143,43 +143,43 @@ public class AdminController {
         return "redirect:/admin";
     }
 
-    // modifica note
-    @GetMapping("/edit-note/{id}")
-    public String editNote(@PathVariable("id") Integer id, Model model) {
-        Note note = noteRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket non trovato"));
+    // // modifica note
+    // @GetMapping("/edit-note/{id}")
+    // public String editNote(@PathVariable("id") Integer id, Model model) {
+    //     Note note = noteRepository.findById(id)
+    //             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket non trovato"));
 
-        model.addAttribute("note", note);
-        return "admin/edit-note";
-    }
+    //     model.addAttribute("note", note);
+    //     return "admin/edit-note";
+    // }
 
-    @PostMapping("/edit-note/{id}")
-    public String update(@Valid @PathVariable("id") Integer id, @ModelAttribute("note") Note formNote,
-            BindingResult bindingResult, Model model, Authentication authentication) {
-        Note note = noteRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "nota non trovata"));
-        Ticket ticket = note.getTicket();
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("note", formNote);
-            model.addAttribute("ticket", ticket);
-            return "/admin/{id}";
-        }
-        formNote.setId(id);
-        formNote.setTicket(ticket);
-        formNote.setAuthor(authentication.getName());
-        formNote.setCreatedAt(LocalDateTime.now());
-        formNote.setUser(ticket.getUser());
+    // @PostMapping("/edit-note/{id}")
+    // public String update(@Valid @PathVariable("id") Integer id, @ModelAttribute("note") Note formNote,
+    //         BindingResult bindingResult, Model model, Authentication authentication) {
+    //     Note note = noteRepository.findById(id)
+    //             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "nota non trovata"));
+    //     Ticket ticket = note.getTicket();
+    //     if (bindingResult.hasErrors()) {
+    //         model.addAttribute("note", formNote);
+    //         model.addAttribute("ticket", ticket);
+    //         return "/admin/{id}";
+    //     }
+    //     formNote.setId(id);
+    //     formNote.setTicket(ticket);
+    //     formNote.setAuthor(authentication.getName());
+    //     formNote.setCreatedAt(LocalDateTime.now());
+    //     formNote.setUser(ticket.getUser());
 
-        noteRepository.save(formNote);
-        return "redirect:/admin";
-    }
+    //     noteRepository.save(formNote);
+    //     return "redirect:/admin";
+    // }
 
-    // cancellazione note
-    @PostMapping("/notes/delete/{noteId}")
-    public String deleteNote(@PathVariable("noteId") Integer noteId, @RequestParam("ticketId") Integer ticketId) {
-        noteRepository.deleteById(noteId);
-        return "redirect:/admin/" + ticketId;
-    }
+    // // cancellazione note
+    // @PostMapping("/notes/delete/{noteId}")
+    // public String deleteNote(@PathVariable("noteId") Integer noteId, @RequestParam("ticketId") Integer ticketId) {
+    //     noteRepository.deleteById(noteId);
+    //     return "redirect:/admin/" + ticketId;
+    // }
 
     @PostMapping("/tickets/delete/{id}")
     public String delete(@PathVariable("id") Integer id) {

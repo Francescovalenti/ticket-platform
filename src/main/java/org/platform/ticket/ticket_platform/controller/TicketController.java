@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
 @Controller
-@RequestMapping("/tickets")  
+@RequestMapping("/tickets")
 public class TicketController {
 
     @Autowired
@@ -22,48 +22,39 @@ public class TicketController {
     @Autowired
     private NoteRepository noteRepository;
 
-    
     @GetMapping
     public String index(Model model) {
         model.addAttribute("tickets", ticketRepository.findAll());
-        return "tickets/index";  
+        return "tickets/index";
     }
 
-   
     @GetMapping("/{id}")
-    public String show(@PathVariable Integer id, Model model) {
+    public String show(@PathVariable("id") Integer id, Model model) {
         Ticket ticket = ticketRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Ticket non trovato con id: " + id));
         model.addAttribute("ticket", ticket);
-        model.addAttribute("noteList", noteRepository.findByTicketId(id));  
-        model.addAttribute("newNote", new Note());  
-        return "tickets/show"; 
+        model.addAttribute("noteList", noteRepository.findByTicketId(id));
+        model.addAttribute("newNote", new Note());
+        return "tickets/show";
     }
 
     @PostMapping("/{id}/note")
-    public String addNote(@PathVariable Integer id,
-            @Valid @ModelAttribute("newNote") Note note,
-            BindingResult bindingResult,
-            Model model) {
+    public String addNote(@Valid @PathVariable ("id")Integer id,  @ModelAttribute("newNote") Note note, BindingResult bindingResult,Model model) {
         Ticket ticket = ticketRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Ticket non trovato"));
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("ticket", ticket);
             model.addAttribute("noteList", noteRepository.findByTicketId(id));
-            return "operator/show";  
+            return "operator/show";
         }
 
-        
         note.setTicket(ticket);
         note.setCreatedAt(LocalDateTime.now());
-        note.setAuthor("admin");  
-        noteRepository.save(note);  
+        note.setAuthor("admin");
+        noteRepository.save(note);
 
-        return "redirect:/tickets/" + id;  
+        return "redirect:/tickets/" + id;
     }
 
-    
 }
-    
-   

@@ -43,18 +43,20 @@
                     <ul class="list-group">
                         <li class="list-group-item d-flex justify-content-between align-items-start" th:each="note : ${noteList}">
                             <div>
-                                <strong th:text="${note.user != null ? note.user.username : 'Autore sconosciuto'}">Autore</strong>
+                                <strong th:text="${note.author}">Autore</strong>
                                 -
-                                <span th:if="${note.createdAt != null}" th:text="${#temporals.format(note.createdAt, 'dd/MM/yyyy HH:mm')}">Data</span><br>
+                                <span th:if="${note.createdAt != null}" 
+                                th:text="${#temporals.format(note.createdAt, 'dd/MM/yyyy HH:mm')}">Data</span><br>
                                 <span th:text="${note.content != null ? note.content : '[Nota vuota]'}">Testo nota</span>
                             </div>
 
                             <div>
-                                <a th:href="@{/operator/editnote/{id}(id=${note.id})}"
+                                <a th:href="@{/note/editnote/{id}(id=${note.id})}"
                                    sec:authorize="hasAuthority('OPERATOR')"
+                                   th:if="${note.author == #authentication.name}"
                                    class="btn btn-warning btn-sm me-2">Edit</a>
 
-                                <button sec:authorize="hasAuthority('OPERATOR')" type="button"
+                                <button sec:authorize="hasAuthority('OPERATOR')" th:if="${note.author == #authentication.name}" type="button"
                                         class="btn btn-danger btn-sm" data-bs-toggle="modal"
                                         th:data-bs-target="'#delete-modal-note-' + ${note.id}">
                                     Delete
@@ -79,7 +81,7 @@
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
-                                            <form th:action="@{/operator/notes/delete/{noteId}(noteId=${note.id})}" method="post" class="d-inline">
+                                            <form th:action="@{/note/deleteOper/{noteId}(noteId=${note.id})}" method="post" class="d-inline">
                                                 <input type="hidden" name="ticketId" th:value="${ticket.id}" />
                                                 <button type="submit" class="btn btn-danger">Delete</button>
                                             </form>
@@ -99,7 +101,7 @@
             
             <div class="card shadow p-4 mb-5">
                 <h4 class="mb-3">Aggiungi una nuova nota</h4>
-                <form th:action="@{/operator/note/{id}(id=${ticket.id})}" th:object="${newNote}" method="post">
+                <form th:action="@{/note/note/{id}(id=${ticket.id})}" th:object="${newNote}" method="post">
 
                     <div class="mb-3">
                         <label class="form-label">Testo della nota</label>
