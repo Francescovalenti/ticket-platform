@@ -2,6 +2,7 @@ package org.platform.ticket.ticket_platform.controller;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,8 +25,11 @@ public class CustomErrorController implements ErrorController {
           } else {
                modelAndView.setViewName("error");
           }
+          
 
+          modelAndView.addObject("status",response.getStatus());
           return modelAndView;
      }
 
+ 
 }
