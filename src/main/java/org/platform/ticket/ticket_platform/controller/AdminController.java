@@ -45,7 +45,8 @@ public class AdminController {
 
     // visualizzazione dei ticket
     @GetMapping
-    public String index(Authentication authentication,@RequestParam(name = "keywords", required = false) String keywords, Model model) {
+    public String index(Authentication authentication,
+            @RequestParam(name = "keywords", required = false) String keywords, Model model) {
         List<Ticket> tickets;
         if (keywords != null && !keywords.isEmpty()) {
             tickets = ticketRepository.findByTitleContainingIgnoreCase(keywords);
@@ -79,10 +80,10 @@ public class AdminController {
         return "redirect:/admin";
     }
 
-   // modifica ticket
+    // modifica ticket
     @GetMapping("/ticket/edit/{id}")
     public String edit(@PathVariable("id") Integer id, Model model) {
-       Optional<Ticket> ticketOptional = ticketRepository.findById(id);
+        Optional<Ticket> ticketOptional = ticketRepository.findById(id);
         if (ticketOptional.isEmpty()) {
             throw new RuntimeException("Ticket non trovato");
         }
@@ -94,7 +95,8 @@ public class AdminController {
     }
 
     @PostMapping("/ticket/edit/{id}")
-    public String update(@Valid @PathVariable("id") Integer id, @ModelAttribute("ticket") Ticket formTicket,BindingResult bindingResult, Model model) {
+    public String update(@Valid @PathVariable("id") Integer id, @ModelAttribute("ticket") Ticket formTicket,
+            BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("users", userRepository.findByRolesNameAndStatus("OPERATOR", UserStatus.ACTIVE));
             model.addAttribute("categories", categoryRepository.findAll());
@@ -106,17 +108,17 @@ public class AdminController {
     }
 
     @PostMapping("/tickets/delete/{id}")
-    public String delete(@PathVariable("id") Integer id,Model model) {
+    public String delete(@PathVariable("id") Integer id, Model model) {
         Optional<Ticket> ticketOptional = ticketRepository.findById(id);
         if (ticketOptional.isEmpty()) {
-        throw new RuntimeException("Ticket non trovato");
+            throw new RuntimeException("Ticket non trovato");
         }
         Ticket ticketToDelete = ticketOptional.get();
-        for (Note note : ticketToDelete.getNotes()){
+        for (Note note : ticketToDelete.getNotes()) {
             noteRepository.delete(note);
         }
         ticketRepository.delete(ticketToDelete);
-        
+
         return "redirect:/admin";
     }
 
@@ -129,7 +131,8 @@ public class AdminController {
     }
 
     @PostMapping("/newprofile")
-    public String updateprofile(@Valid @ModelAttribute("users") User FormUser, BindingResult bindingResult, Model model) {
+    public String updateprofile(@Valid @ModelAttribute("users") User FormUser, BindingResult bindingResult,
+            Model model) {
         if (bindingResult.hasErrors()) {
             return "admin/newprofile";
         }
@@ -154,7 +157,8 @@ public class AdminController {
     }
 
     @PostMapping("/categories")
-    public String newCategory(@Valid @ModelAttribute("category") Category formCategory, BindingResult bindingResult,Model model) {
+    public String newCategory(@Valid @ModelAttribute("category") Category formCategory, BindingResult bindingResult,
+            Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("categories", categoryRepository.findAll());
             return "admin/categories";
