@@ -59,7 +59,7 @@
                         <td th:text="${ticket.status}"></td>
                         <td th:text="${#lists.size(ticket.notes)}"></td>
                         <td>
-                            <a th:href="@{/admin/{id}(id=${ticket.id})}" class="btn btn-primary btn-sm">Dettagli</a>
+                            <a th:href="@{/note/{id}(id=${ticket.id})}" class="btn btn-primary btn-sm">Dettagli</a>
 
                             <a th:href="@{/admin/ticket/edit/{id}(id=${ticket.id})}" sec:authorize="hasAuthority('ADMIN')"
                                 class="btn btn-warning btn-sm">Edit</a>

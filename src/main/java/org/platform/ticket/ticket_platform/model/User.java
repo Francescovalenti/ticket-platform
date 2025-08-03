@@ -107,4 +107,21 @@ public class User {
         this.roles = roles;
     }
 
+    public List<Ticket> getTickets() {
+    return this.tickets;
+}
+
+public boolean hasUnfinishedTickets() {
+    if (this.getTickets() == null) 
+    return false;
+
+    for (Ticket operator : this.getTickets()) {
+        if (operator.getStatus() == Ticket.StatusTicket.TODO || operator.getStatus() == Ticket.StatusTicket.IN_PROGRESS) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 }
