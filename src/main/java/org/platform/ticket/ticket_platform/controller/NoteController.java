@@ -92,7 +92,7 @@ public class NoteController {
         if (bindingResult.hasErrors()) {
             model.addAttribute("note", formNote);
             model.addAttribute("ticket", ticket);
-            return "/admin/show";
+            return "/admin/{id}";
         }
 
         formNote.setId(id);
@@ -101,7 +101,7 @@ public class NoteController {
         formNote.setCreatedAt(LocalDateTime.now());
         formNote.setUser(ticket.getUser());
         noteRepository.save(formNote);
-        return "redirect:/admin" + ticket.getId();
+        return "redirect:/note/" + ticket.getId();
     }
 
     // possibilità di gestione di note personale del operatore
