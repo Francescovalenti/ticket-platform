@@ -46,7 +46,6 @@ public class Ticket {
 
     @ManyToOne
     @JoinColumn(name = "categories_id", nullable = false)
-  
     private Category category;
    
     @ManyToOne

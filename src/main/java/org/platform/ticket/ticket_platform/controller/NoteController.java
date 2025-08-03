@@ -68,7 +68,7 @@ public class NoteController {
         formNote.setCreatedAt(LocalDateTime.now());
         formNote.setUser(ticket.getUser());
         noteRepository.save(formNote);
-        return "redirect:/admin/" + id;
+        return "redirect:/note/" + id;
     }
 
     // modifica note per Admin
@@ -100,7 +100,7 @@ public class NoteController {
         if (bindingResult.hasErrors()) {
             model.addAttribute("note", formNote);
             model.addAttribute("ticket", ticket);
-            return "/admin/{id}";
+            return "/admin/show";
         }
 
         formNote.setId(id);
@@ -109,7 +109,7 @@ public class NoteController {
         formNote.setCreatedAt(LocalDateTime.now());
         formNote.setUser(ticket.getUser());
         noteRepository.save(formNote);
-        return "redirect:/admin";
+        return "redirect:/admin" + ticket.getId();
     }
 
     // possibilità di gestione di note personale del operatore
@@ -172,20 +172,22 @@ public class NoteController {
        return "redirect:/operator/" + ticket.getId();
 
     }
+ //cancellazione note
+ @PostMapping("/delete/{noteId}")
+public String deleteNote(@Valid @PathVariable("noteId") Integer noteId,@RequestParam("ticketId") Integer ticketId) {
+    Ticket ticket = ticketRepository.findById(ticketId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket non trovato"));
 
-    // cancellazione note
-    @PostMapping("/delete/{noteId}")
-    public String deleteNote(@Valid @PathVariable("noteId") Integer noteId,
-            @RequestParam("ticketId") Integer ticketId) {
-        noteRepository.deleteById(noteId);
-        return "redirect:/admin/" + ticketId;
-    }
-
-    @PostMapping("/deleteOper/{noteId}")
-    public String deleteNoteOper(@Valid @PathVariable("noteId") Integer noteId,
-            @RequestParam("ticketId") Integer ticketId) {
-        noteRepository.deleteById(noteId);
-        return "redirect:/operator/" + ticketId;
-    }
-
+            noteRepository.deleteById(noteId);
+            return "redirect:/note/" + ticket.getId();
 }
+    @PostMapping("/deleteOper/{noteId}")
+    public String deleteNoteOper(@Valid @PathVariable("noteId") Integer noteId, @RequestParam("ticketId") Integer ticketId) {
+       Ticket ticket = ticketRepository.findById(ticketId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket non trovato"));
+
+            noteRepository.deleteById(noteId);
+            return "redirect:/note/" + ticket.getId();
+}
+    }
+

@@ -57,6 +57,7 @@ public class User {
     private List<Ticket> tickets;
 
     @OneToMany(mappedBy = "user")
+
     private List<Note> note;
 
     public Integer getId() {

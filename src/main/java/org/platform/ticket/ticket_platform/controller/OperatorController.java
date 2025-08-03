@@ -93,13 +93,12 @@ public class OperatorController {
             return "operator/profile";
         }
 
-       if (userForm.hasUnfinishedTickets() && userForm.getStatus() == User.UserStatus.NOT_ACTIVE) {
-    model.addAttribute("user", userForm);
-    model.addAttribute("isEditable", true);
-    model.addAttribute("errorMessage", "Non puoi diventare 'Non attivo' se hai ticket aperti!");
-    return "operator/profile";
-}
-
+        if (userForm.hasUnfinishedTickets() && userForm.getStatus() == User.UserStatus.NOT_ACTIVE) {
+            model.addAttribute("user", userForm);
+            model.addAttribute("isEditable", true);
+            model.addAttribute("errorMessage", "Non puoi diventare 'Non attivo' se hai ticket aperti!");
+            return "operator/profile";
+        }
 
         userRepository.save(userForm);
 
