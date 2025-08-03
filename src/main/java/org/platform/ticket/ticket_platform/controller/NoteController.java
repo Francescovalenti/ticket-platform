@@ -101,7 +101,7 @@ public class NoteController {
         formNote.setCreatedAt(LocalDateTime.now());
         formNote.setUser(ticket.getUser());
         noteRepository.save(formNote);
-        return "redirect:/note/" + ticket.getId();
+        return "redirect:/admin/" + ticket.getId();
     }
 
     // possibilità di gestione di note personale del operatore

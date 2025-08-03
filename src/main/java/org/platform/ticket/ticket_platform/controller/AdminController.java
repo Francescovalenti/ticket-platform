@@ -107,6 +107,17 @@ public class AdminController {
         return "redirect:/admin";
     }
 
+    // mostra i dettagli di un ticket per l'admin
+    @GetMapping("/{id}")
+    public String show(@PathVariable("id") Integer id, Model model) {
+        Ticket ticket = ticketRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Ticket non trovato"));
+        model.addAttribute("ticket", ticket);
+        model.addAttribute("noteList", ticket.getNotes());
+        model.addAttribute("newNote", new Note());
+        return "admin/show";
+    }
+
     @PostMapping("/tickets/delete/{id}")
     public String delete(@PathVariable("id") Integer id, Model model) {
         Optional<Ticket> ticketOptional = ticketRepository.findById(id);
