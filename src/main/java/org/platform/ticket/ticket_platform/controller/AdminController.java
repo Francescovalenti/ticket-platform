@@ -82,21 +82,7 @@ public class AdminController {
         return "redirect:/admin";
     }
 
-    @GetMapping("/{id}")
-    public String show(@PathVariable("id") Integer id, Model model) {
-        Optional<Ticket> ticketOptional = ticketRepository.findById(id);
-        if (ticketOptional.isEmpty()) {
-            throw new RuntimeException("Ticket non trovato");
-        }
-        Ticket ticket = ticketOptional.get();
-        model.addAttribute("ticket", ticket);
-        model.addAttribute("noteList", ticket.getNotes());
-        model.addAttribute("newNote", new Note());
-        return "admin/show";
-    }
-
- 
-    // modifica ticket
+   // modifica ticket
     @GetMapping("/edit/ticket/{id}")
     public String edit(@PathVariable("id") Integer id, Model model) {
        Optional<Ticket> ticketOptional = ticketRepository.findById(id);

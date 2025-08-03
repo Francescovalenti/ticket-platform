@@ -32,6 +32,21 @@ public class NoteController {
     @Autowired
     private TicketRepository ticketRepository;
 
+   //visualizzazione note per admin
+        @GetMapping("/{id}")
+    public String show(@PathVariable("id") Integer id, Model model) {
+        Optional<Ticket> ticketOptional = ticketRepository.findById(id);
+        if (ticketOptional.isEmpty()) {
+            throw new RuntimeException("Ticket non trovato");
+        }
+        Ticket ticket = ticketOptional.get();
+        model.addAttribute("ticket", ticket);
+        model.addAttribute("noteList", ticket.getNotes());
+        model.addAttribute("newNote", new Note());
+        return "admin/show";
+    }
+
+
     // possibilità di aggiungere note
     @PostMapping("/{id}/note")
     public String storeNote(@Valid @PathVariable Integer id, @ModelAttribute("newNote") Note formNote,
