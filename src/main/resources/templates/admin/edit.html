@@ -21,7 +21,7 @@
             <h1 class="text-center"><span class="badge  text-bg-secondary">Modifica Ticket</span></h1>
         </div>
 
-        <form th:action="@{/admin/edit/ticket/{id}(id=${ticket.id})}" th:object="${ticket}" method="post">
+        <form th:action="@{/admin/ticket/edit/{id}(id=${ticket.id})}" th:object="${ticket}" method="post">
 
             <div class="mb-3">
                 <label class="form-label">

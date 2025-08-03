@@ -61,7 +61,7 @@
                         <td>
                             <a th:href="@{/admin/{id}(id=${ticket.id})}" class="btn btn-primary btn-sm">Dettagli</a>
 
-                            <a th:href="@{/admin/edit/ticket/{id}(id=${ticket.id})}" sec:authorize="hasAuthority('ADMIN')"
+                            <a th:href="@{/admin/ticket/edit/{id}(id=${ticket.id})}" sec:authorize="hasAuthority('ADMIN')"
                                 class="btn btn-warning btn-sm">Edit</a>
                             <button sec:authorize="hasAuthority('ADMIN')" type="button"
                                 class="d-inline btn btn-danger btn-sm" data-bs-toggle="modal"

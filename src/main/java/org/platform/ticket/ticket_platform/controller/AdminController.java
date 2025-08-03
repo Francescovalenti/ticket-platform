@@ -1,9 +1,7 @@
 package org.platform.ticket.ticket_platform.controller;
 
-
 import java.util.List;
 import java.util.Optional;
-
 import org.platform.ticket.ticket_platform.model.Category;
 import org.platform.ticket.ticket_platform.model.Note;
 import org.platform.ticket.ticket_platform.model.Role;
@@ -28,7 +26,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
-
 import jakarta.validation.Valid;
 
 @Controller
@@ -83,7 +80,7 @@ public class AdminController {
     }
 
    // modifica ticket
-    @GetMapping("/edit/ticket/{id}")
+    @GetMapping("/ticket/edit/{id}")
     public String edit(@PathVariable("id") Integer id, Model model) {
        Optional<Ticket> ticketOptional = ticketRepository.findById(id);
         if (ticketOptional.isEmpty()) {
@@ -96,7 +93,7 @@ public class AdminController {
         return "admin/edit";
     }
 
-    @PostMapping("/edit/ticket/{id}")
+    @PostMapping("/ticket/edit/{id}")
     public String update(@Valid @PathVariable("id") Integer id, @ModelAttribute("ticket") Ticket formTicket,BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("users", userRepository.findByRolesNameAndStatus("OPERATOR", UserStatus.ACTIVE));
@@ -110,15 +107,15 @@ public class AdminController {
 
     @PostMapping("/tickets/delete/{id}")
     public String delete(@PathVariable("id") Integer id,Model model) {
-         Optional<Ticket> ticketOptional = ticketRepository.findById(id);
-          if (ticketOptional.isEmpty()) {
-              throw new RuntimeException("Ticket non trovato");
-          }
+        Optional<Ticket> ticketOptional = ticketRepository.findById(id);
+        if (ticketOptional.isEmpty()) {
+        throw new RuntimeException("Ticket non trovato");
+        }
         Ticket ticketToDelete = ticketOptional.get();
-          for (Note note : ticketToDelete.getNotes()){
+        for (Note note : ticketToDelete.getNotes()){
             noteRepository.delete(note);
-          }
-          ticketRepository.delete(ticketToDelete);
+        }
+        ticketRepository.delete(ticketToDelete);
         
         return "redirect:/admin";
     }
