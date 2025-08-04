@@ -93,7 +93,17 @@ public class OperatorController {
             return "operator/profile";
         }
 
-        if (userForm.hasUnfinishedTickets() && userForm.getStatus() == User.UserStatus.NOT_ACTIVE) {
+        List<Ticket> tickets = ticketRepository.findByUser(userForm);
+         boolean hasOpenTickets = false;
+         // modifica se lo stato è attivo
+         for (Ticket oper : tickets) {
+            if (oper.getStatus() == Ticket.StatusTicket.TODO || oper.getStatus() == Ticket.StatusTicket.IN_PROGRESS) {
+                hasOpenTickets = true;
+                break;
+            }
+         }
+        // Non si può modificare lo stato in non attivo se ci sono ticket aperti
+        if (hasOpenTickets && userForm.getStatus() == User.UserStatus.NOT_ACTIVE) {
             model.addAttribute("user", userForm);
             model.addAttribute("isEditable", true);
             model.addAttribute("errorMessage", "Non puoi diventare 'Non attivo' se hai ticket aperti!");
@@ -105,5 +115,4 @@ public class OperatorController {
         return "redirect:/operator/profile";
     }
 
-    
 }

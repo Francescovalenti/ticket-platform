@@ -3,6 +3,7 @@ package org.platform.ticket.ticket_platform.model;
 import java.util.List;
 import java.util.Set;
 
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Entity;
@@ -24,6 +25,8 @@ import jakarta.validation.constraints.NotNull;
 @Entity
 @Table(name = "users")
 public class User {
+
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -112,17 +115,6 @@ public class User {
     return this.tickets;
 }
 
-public boolean hasUnfinishedTickets() {
-    if (this.getTickets() == null) 
-    return false;
 
-    for (Ticket operator : this.getTickets()) {
-        if (operator.getStatus() == Ticket.StatusTicket.TODO || operator.getStatus() == Ticket.StatusTicket.IN_PROGRESS) {
-            return true;
-        }
-    }
-
-    return false;
-}
 
 }
