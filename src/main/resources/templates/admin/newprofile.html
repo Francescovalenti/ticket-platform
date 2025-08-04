@@ -24,7 +24,7 @@
                 <span th:text="${errorMessage}"></span>
             </div>
 
-            <form th:action="@{/admin/newprofile}" th:object="${users}" method="post">
+            <form th:action="@{/function/newprofile}" th:object="${users}" method="post">
 
 
                 <input type="hidden" th:field="*{id}" />
