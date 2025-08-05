@@ -17,11 +17,11 @@ public class CustomErrorController implements ErrorController {
         int status = response.getStatus();
 
         if (status == HttpStatus.NOT_FOUND.value()) {
-            modelAndView.setViewName("error/error-404");
+            modelAndView.setViewName("error/error404");
         } else if (status == HttpStatus.FORBIDDEN.value()) {
-            modelAndView.setViewName("error/error-403");
+            modelAndView.setViewName("error/error403");
         } else if (status == HttpStatus.INTERNAL_SERVER_ERROR.value()) {
-            modelAndView.setViewName("error/error-500");
+            modelAndView.setViewName("error/error500");
         } else {
             modelAndView.setViewName("error/error"); 
         }
