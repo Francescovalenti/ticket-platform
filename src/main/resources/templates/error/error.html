@@ -1,16 +1,19 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <title>Errore - Ticket Platform</title>
-     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.7/css/bootstrap.min.css}" />
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.7/css/bootstrap.min.css}" />
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
+
 <body>
     <h1>Oops! Si è verificato un errore.</h1>
     <p>
         <strong th:text="'Codice errore: ' + ${status}"></strong><br>
-       
+
     </p>
     <a th:href="@{/}">Torna alla home</a>
 </body>
-</html> 
+
+</html>
