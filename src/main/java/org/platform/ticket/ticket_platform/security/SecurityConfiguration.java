@@ -19,8 +19,19 @@ public class SecurityConfiguration {
         http.authorizeHttpRequests(requests -> requests
                 .requestMatchers("/admin/**").hasAuthority("ADMIN")
                 .requestMatchers("/operator/**").hasAnyAuthority("OPERATOR")
+                .requestMatchers("/function/newprofile").hasAnyAuthority("ADMIN")
+                .requestMatchers("/function/categories").hasAnyAuthority("ADMIN")
+                .requestMatchers("/admin/create").hasAnyAuthority("ADMIN")
+                .requestMatchers("/ticket/edit/").hasAnyAuthority("ADMIN")
+                .requestMatchers("/ticket/delete").hasAnyAuthority("ADMIN")
+                .requestMatchers("/edit-note").hasAnyAuthority("ADMIN")
+                .requestMatchers("editnote").hasAnyAuthority("OPERATOR")
                 .anyRequest().permitAll())
-                .formLogin(Customizer.withDefaults())
+                .formLogin(form -> form.loginPage("/login").permitAll())
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout")
+                        .permitAll())
                 
                 .cors(cors -> cors.disable())
                 .csrf(csrf -> csrf.disable());

@@ -100,7 +100,7 @@
         </div>
 
         <!-- Form nuova nota -->
-        <div class="card shadow p-4 mb-5">
+        <div class="card shadow p-4 mb-5" sec:authorize="hasAuthority('ADMIN')">
             <h4 class="mb-3">Aggiungi una nuova nota</h4>
             <form th:action="@{/note/{id}/note(id=${ticket.id})}" th:object="${newNote}" method="post">
                 <div class="mb-3">

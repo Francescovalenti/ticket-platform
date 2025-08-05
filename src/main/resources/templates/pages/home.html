@@ -6,9 +6,10 @@
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.7/css/bootstrap.min.css}" />
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
- <header>
-        <div th:replace="~{fragments/homenavbar :: navbar('Dashboard')}"></div>
-    </header>
+<header>
+   
+</header>
+
 <body class="bg-light">
 
     <div class="align-items-center">
@@ -17,6 +18,12 @@
     </div>
     <section class="container mt-5 pt-5 align-items-center">
         <div class="mt-4 mx-auto d-flex flex-column gap-3 pt-5 align-items-center col-6">
+
+            <div class="user-details text-primary">
+                <a href="/login"><button type="button" class="btn btn-primary btn-lg text-center"
+                        sec:authorize="!isAuthenticated()">Vai al
+                        login</button></a>
+            </div>
             <div sec:authorize="hasAuthority('ADMIN')">
                 <a href="/admin"><button type="button" class="btn btn-primary btn-lg text-center">Vai all’area
                         Amministrazione</button></a>
