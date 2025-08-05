@@ -5,9 +5,20 @@ body {
   background-repeat: no-repeat;
   min-height: 100vh;
 }
+
 .menu-box {
-    background-color: rgba(42, 3, 218, 0.2);
-    padding: 20px;
-    border-radius: 15px;
-  
+  background-color: rgba(42, 3, 218, 0.2);
+  padding: 20px;
+  border-radius: 15px;
+
+}
+
+.error-box {
+   background-color: white;
+    border: 2px solid #dc3545;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    max-width: 300px;
+    
 }
